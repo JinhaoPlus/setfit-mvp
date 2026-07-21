@@ -61,6 +61,13 @@ and client-side route changes are tracked after deployment. Enable Web Analytics
 for the project in the Vercel dashboard and redeploy before expecting data. No
 environment variable is required.
 
+## Vercel Speed Insights
+
+The app includes `@vercel/speed-insights` in the locale root layout to collect
+real-user Core Web Vitals after deployment. Enable Speed Insights for the
+project in the Vercel dashboard and redeploy before expecting data. No
+environment variable is required.
+
 ## Useful Commands
 
 - `npm run dev`: start local development

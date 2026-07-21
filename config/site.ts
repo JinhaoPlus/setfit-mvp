@@ -13,6 +13,14 @@ export const siteConfig = {
   billyExampleCm: { widthCm: 76, depthCm: 28, heightCm: 100 },
 } as const;
 
+export function siteOrigin() {
+  const vercelProductionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL
+    ?? (vercelProductionUrl ? `https://${vercelProductionUrl}` : "http://localhost:3000");
+
+  return new URL(configuredUrl).origin;
+}
+
 export type Locale = (typeof siteConfig.locales)[number]["code"];
 
 export const localeSettings = {

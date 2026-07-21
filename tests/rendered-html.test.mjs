@@ -9,6 +9,23 @@ async function render(path = "/") {
   return worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
 }
 
+test("publishes one canonical multilingual sitemap", async () => {
+  const sitemapResponse = await render("/sitemap.xml");
+  assert.equal(sitemapResponse.status, 200);
+  const sitemap = await sitemapResponse.text();
+  assert.equal((sitemap.match(/<url>/g) ?? []).length, 1518);
+  assert.match(sitemap, /<loc>http:\/\/localhost:3000\/en\/<\/loc>/);
+  assert.match(sitemap, /hreflang="en" href="http:\/\/localhost:3000\/en\/"/);
+  assert.match(sitemap, /hreflang="de" href="http:\/\/localhost:3000\/de\/"/);
+  assert.match(sitemap, /hreflang="zh" href="http:\/\/localhost:3000\/zh\/"/);
+  assert.match(sitemap, /hreflang="x-default" href="http:\/\/localhost:3000\/en\/"/);
+  assert.doesNotMatch(sitemap, /vercel\.app/);
+
+  const robotsResponse = await render("/robots.txt");
+  assert.equal(robotsResponse.status, 200);
+  assert.match(await robotsResponse.text(), /Sitemap: http:\/\/localhost:3000\/sitemap\.xml/);
+});
+
 test("keeps furniture presets as fixed-width horizontal cards", async () => {
   const stylesheet = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(stylesheet, /\.furniture-preset-list \{[^}]*display: flex;[^}]*overflow-x: auto;/);
@@ -174,6 +191,7 @@ test("explains that saved cabinet dimensions stay in the browser", async () => {
   assert.match(html, /they are not sent to a server/);
   assert.match(html, /Website analytics/);
   assert.match(html, /Vercel Web Analytics automatically records anonymous page views/);
+  assert.match(html, /Vercel Speed Insights also records anonymous Web Vitals/);
   assert.match(html, /does not use third-party cookies/);
   assert.match(html, /separately asks for permission before product analytics starts/);
   assert.match(html, /session replay, exception capture, heatmaps and performance capture are disabled/);

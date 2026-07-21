@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type CSSProperties, useState } from "react";
+import { type CSSProperties, useRef, useState } from "react";
 import { InfoTip } from "@/components/InfoTip";
 import { useMeasurementContext } from "@/components/MeasurementProvider";
 import { saveMeasurementPreferences } from "@/components/measurement-preferences";
@@ -37,13 +37,7 @@ type OrientedDimensions = {
   heightCm: number;
 };
 
-function fitScore(set: OrientedDimensions, cabinet: OrientedDimensions) {
-  return (["widthCm", "depthCm", "heightCm"] as const).reduce((score, axis) => {
-    const available = Math.max(cabinet[axis], 0.1);
-    const overflow = Math.max(0, set[axis] - cabinet[axis]);
-    return score + (overflow > 0 ? 1 : 0) + overflow / available;
-  }, 0);
-}
+type PlacementOrientation = "standard" | "rotated";
 
 function sameDimensions(first: OrientedDimensions, second: OrientedDimensions) {
   return (["widthCm", "depthCm", "heightCm"] as const).every((axis) => Math.abs(first[axis] - second[axis]) < 0.001);
@@ -56,9 +50,13 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
   const safeInitialNumber = sets.some((set) => set.set_number === initialSetNumber) ? initialSetNumber : sets[0].set_number;
   const [setNumber, setSetNumber] = useState(safeInitialNumber);
   const [visualZoom, setVisualZoom] = useState(defaultVisualZoom);
+  const [orientation, setOrientation] = useState<PlacementOrientation>("standard");
+  const [customSelected, setCustomSelected] = useState(false);
+  const widthInputRef = useRef<HTMLInputElement>(null);
   const { unit, widthCm: shelfWidthCm, depthCm: shelfDepthCm, heightCm: shelfHeightCm, numberLocale } = useMeasurementContext();
   const shelf = { widthCm: shelfWidthCm, depthCm: shelfDepthCm, heightCm: shelfHeightCm };
   const activeFurniturePreset = furniturePresets.find((preset) => sameDimensions(preset.planningClearCm, shelf));
+  const isCustomActive = customSelected || !activeFurniturePreset;
   const selected = sets.find((set) => set.set_number === setNumber) ?? sets[0];
   const { widthCm, depthCm, heightCm } = selected;
 
@@ -68,14 +66,10 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
   const roomyRotated = shelf.widthCm >= depthCm + siteConfig.displayClearanceCm && shelf.depthCm >= widthCm + siteConfig.displayClearanceCm && shelf.heightCm >= heightCm + siteConfig.displayClearanceCm;
   const normalDimensions = { widthCm, depthCm, heightCm };
   const rotatedDimensions = { widthCm: depthCm, depthCm: widthCm, heightCm };
-  const visualOrientation = normal
-    ? "standard"
-    : rotated
-      ? "rotated"
-      : fitScore(normalDimensions, shelf) <= fitScore(rotatedDimensions, shelf)
-        ? "standard"
-        : "rotated";
-  const visualSet = visualOrientation === "standard" ? normalDimensions : rotatedDimensions;
+  const visualSet = orientation === "standard" ? normalDimensions : rotatedDimensions;
+  const selectedFits = orientation === "standard" ? normal : rotated;
+  const selectedRoomy = orientation === "standard" ? roomyNormal : roomyRotated;
+  const alternativeFits = orientation === "standard" ? rotated : normal;
   const comparisons = (["widthCm", "depthCm", "heightCm"] as const).map((axis) => ({
     axis,
     cabinetCm: shelf[axis],
@@ -101,21 +95,33 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
     "--set-height": visualEdge(visualSet.heightCm),
     "--visual-zoom": visualZoom,
   } as CSSProperties;
-  const visualStatus = comparisons.every((item) => item.fits) ? "fits" : "no";
+  const visualStatus = selectedFits ? "fits" : "no";
   const selectedImage = selected.imageAvailable ? `/set-images/${selected.set_id}.jpg` : null;
-  const result = normal
-    ? { status: "fits", icon: "✓", title: roomyNormal ? t.fitsRoomy : t.fitsTight, message: roomyNormal ? t.fitsRoomyMessage : t.fitsTightMessage, orientation: t.standard }
-    : rotated
-      ? { status: "rotate", icon: "↻", title: roomyRotated ? t.rotateRoomy : t.rotateTight, message: t.rotateMessage, orientation: t.rotated }
+  const result = selectedFits
+    ? orientation === "standard"
+      ? { status: "fits", icon: "✓", title: selectedRoomy ? t.fitsRoomy : t.fitsTight, message: selectedRoomy ? t.fitsRoomyMessage : t.fitsTightMessage, orientation: t.standard }
+      : { status: "rotate", icon: "↻", title: selectedRoomy ? t.rotateRoomy : t.rotateTight, message: t.rotateMessage, orientation: t.rotated }
+    : alternativeFits
+      ? { status: "no", icon: "×", title: t.selectedOrientationNoFit, message: orientation === "standard" ? t.tryRotated : t.tryStandard, orientation: orientation === "standard" ? t.standard : t.rotated }
       : { status: "no", icon: "×", title: t.noFit, message: t.noFitMessage, orientation: t.noStrict };
 
   const updateShelf = (key: keyof typeof shelf, rawValue: string) => {
     const parsed = Number.parseFloat(rawValue);
+    setCustomSelected(true);
     saveMeasurementPreferences({ ...shelf, [key]: Number.isFinite(parsed) ? toCm(parsed, unit) : 0, unit });
   };
 
   const applyFurniturePreset = (preset: FurniturePreset) => {
+    setCustomSelected(false);
     saveMeasurementPreferences({ ...preset.planningClearCm, unit });
+  };
+
+  const selectCustomDimensions = () => {
+    setCustomSelected(true);
+    window.requestAnimationFrame(() => {
+      widthInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      widthInputRef.current?.focus();
+    });
   };
 
   const changeVisualZoom = (change: number) => {
@@ -146,12 +152,31 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
               <span className="fit-visual-kicker">{t.presetKicker}</span>
               <h3 id={`furniture-presets-title-${safeInitialNumber}`}>{t.presetTitle}</h3>
             </div>
-            <span className="furniture-preset-count">{furniturePresets.length} {t.presetCount}</span>
+            <span className="furniture-preset-count">{furniturePresets.length + 1} {t.presetCount}</span>
           </div>
           <p className="furniture-presets-intro">{t.presetIntro}</p>
           <div className="furniture-preset-list">
+            <article className="furniture-preset furniture-preset-custom" data-active={isCustomActive}>
+              <button
+                type="button"
+                className="furniture-preset-button"
+                aria-label={t.customPresetName}
+                aria-pressed={isCustomActive}
+                onClick={selectCustomDimensions}
+              >
+                <span className="furniture-preset-image furniture-preset-custom-visual" aria-hidden="true">
+                  <span>{localeConfig.axes.width} × {localeConfig.axes.depth} × {localeConfig.axes.height}</span>
+                </span>
+                <span className="furniture-preset-copy">
+                  <span className="furniture-preset-brand">{t.customPresetBrand}</span>
+                  <strong>{t.customPresetName}</strong>
+                  <span className="furniture-preset-clear-label">{t.customPresetCopy}</span>
+                  <span className="furniture-preset-action">{isCustomActive ? t.customPresetActive : t.customPresetApply}</span>
+                </span>
+              </button>
+            </article>
             {furniturePresets.map((preset) => {
-              const isActive = activeFurniturePreset?.id === preset.id;
+              const isActive = !customSelected && activeFurniturePreset?.id === preset.id;
               return (
                 <article className="furniture-preset" data-active={isActive} key={preset.id}>
                   <button
@@ -174,7 +199,6 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
                   </button>
                   <div className="furniture-preset-source">
                     <span>{t.presetOuter}{dictionary.common.labelSeparator}{furnitureDimensions(preset.publishedOuterCm)}</span>
-                    <a href={preset.sourceUrl} target="_blank" rel="noreferrer">{t.presetSource} ↗</a>
                   </div>
                 </article>
               );
@@ -182,7 +206,19 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
           </div>
           <p className="furniture-presets-note">{t.presetNote}</p>
         </section>
-        <div className="dimension-inputs">{(["widthCm", "depthCm", "heightCm"] as const).map((key) => { const label = key === "widthCm" ? t.internalWidth : key === "depthCm" ? t.internalDepth : t.internalHeight; return <div className="field" key={key}><label htmlFor={`${key}-${safeInitialNumber}`}>{label}</label><div className="input-wrap"><input id={`${key}-${safeInitialNumber}`} min="0" step="0.1" inputMode="decimal" type="number" value={shown(fromCm(shelf[key], unit))} onChange={(event) => updateShelf(key, event.target.value)} /><span className="input-unit">{unit}</span></div></div>; })}</div>
+        {isCustomActive ? <p className="custom-dimensions-hint" id={`custom-dimensions-hint-${safeInitialNumber}`}>{t.customDimensionsHint}</p> : null}
+        <div className="dimension-inputs">{(["widthCm", "depthCm", "heightCm"] as const).map((key) => { const label = key === "widthCm" ? t.internalWidth : key === "depthCm" ? t.internalDepth : t.internalHeight; return <div className="field" key={key}><label htmlFor={`${key}-${safeInitialNumber}`}>{label}</label><div className="input-wrap"><input ref={key === "widthCm" ? widthInputRef : undefined} id={`${key}-${safeInitialNumber}`} min="0" step="0.1" inputMode="decimal" type="number" value={shown(fromCm(shelf[key], unit))} aria-describedby={isCustomActive ? `custom-dimensions-hint-${safeInitialNumber}` : undefined} onChange={(event) => updateShelf(key, event.target.value)} /><span className="input-unit">{unit}</span></div></div>; })}</div>
+        <section className="orientation-picker" aria-labelledby={`orientation-title-${safeInitialNumber}`}>
+          <div>
+            <span className="fit-visual-kicker">{t.orientationKicker}</span>
+            <h3 id={`orientation-title-${safeInitialNumber}`}>{t.orientationTitle}</h3>
+            <p>{t.orientationHint}</p>
+          </div>
+          <div className="orientation-toggle" role="group" aria-label={t.orientationControls}>
+            <button type="button" aria-pressed={orientation === "standard"} onClick={() => setOrientation("standard")}>{t.standard}</button>
+            <button type="button" aria-pressed={orientation === "rotated"} onClick={() => setOrientation("rotated")}>{t.rotated}</button>
+          </div>
+        </section>
         <section className="fit-visual" aria-labelledby={`fit-visual-title-${safeInitialNumber}`}>
           <div className="fit-visual-heading">
             <div>
@@ -227,7 +263,7 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
         <section className="fit-dimension-check" aria-labelledby={`fit-dimensions-title-${safeInitialNumber}`}>
           <div className="fit-dimension-heading">
             <h3 id={`fit-dimensions-title-${safeInitialNumber}`}>{t.dimensionCheck}</h3>
-            <span>{visualOrientation === "standard" ? t.standard : t.rotated}</span>
+            <span>{orientation === "standard" ? t.standard : t.rotated}</span>
           </div>
           <div className="fit-dimension-labels" aria-hidden="true"><span>{t.dimensionLabel}</span><span>{t.setLabel}</span><span>{t.cabinetLabel}</span><span>{t.statusLabel}</span></div>
           {comparisons.map((comparison) => {

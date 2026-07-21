@@ -58,7 +58,11 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /aria-label="Zoom in"/);
   assert.match(html, /Three-dimensional proportional cabinet and set preview/);
   assert.match(html, /Size comparison/);
+  assert.match(html, /Choose how the set faces the cabinet/);
+  assert.match(html, /aria-label="Set placement direction"/);
+  assert.match(html, /aria-pressed="true">Standard orientation<\/button>/);
   assert.match(html, /Start with a cabinet preset/);
+  assert.match(html, /Custom size/);
   assert.match(html, /Published outside size/);
   assert.match(html, /Estimated clear space/);
   assert.match(html, /Published clear space/);
@@ -66,7 +70,11 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /\/furniture-presets\/moduspace-sixth165\.jpg/);
   assert.match(html, /\/furniture-presets\/ikea-billy\.jpg/);
   assert.match(html, /\/furniture-presets\/muji-stacking-shelf\.jpg/);
-  assert.equal((html.match(/class="furniture-preset"/g) ?? []).length, 11);
+  assert.equal((html.match(/class="furniture-preset(?: |")/g) ?? []).length, 12);
+  assert.ok(html.indexOf("furniture-preset-custom") < html.indexOf("/furniture-presets/ikea-billy.jpg"));
+  assert.ok(html.indexOf("/furniture-presets/ikea-billy.jpg") < html.indexOf("/furniture-presets/muji-stacking-shelf.jpg"));
+  assert.ok(html.indexOf("/furniture-presets/muji-stacking-shelf.jpg") < html.indexOf("/furniture-presets/moduspace-sixth165.jpg"));
+  assert.doesNotMatch(html, /Official product page|href="https:\/\/(?:[^"/]+\.)?(?:ikea|muji|moduspace)\./i);
   assert.match(html, /<dt>433<\/dt><dd>built H\/W\/D records<\/dd>/);
   assert.match(html, /Titanic retail package/);
   assert.match(html, /Measure the cabinet space that really counts/);
@@ -182,10 +190,13 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /aria-label="3D 预览缩放"/);
   assert.match(html, /柜子与套装的三维比例预览/);
   assert.match(html, /尺寸对比/);
+  assert.match(html, /选择套装朝向/);
+  assert.match(html, /aria-label="套装摆放方向"/);
+  assert.match(html, /自定义尺寸/);
   assert.match(html, /从柜架预设开始/);
-  assert.match(html, /官网外部尺寸/);
+  assert.match(html, /公开外部尺寸/);
   assert.match(html, /预估内部净空/);
-  assert.match(html, /官网内部净空/);
+  assert.match(html, /公开内部净空/);
   assert.match(html, /大型展示柜/);
   assert.match(html, /最终决定前，请实测组装后的柜体/);
   assert.match(html, /hrefLang="en"/);
@@ -247,4 +258,29 @@ test("publishes the original cabinet measuring guide in every locale", async () 
     assert.match(html, /5 cm/);
     assert.match(html, /hrefLang="x-default"/);
   }
+});
+
+test("turns the legacy BILLY guide into a selectable cabinet fit table", async () => {
+  const response = await render("/zh/guides/sets-for-ikea-billy");
+  assert.equal(response.status, 200);
+  const html = (await response.text()).replaceAll("<!-- -->", "");
+  assert.match(html, /哪些大型套装能放进你的柜架尺寸/);
+  assert.match(html, /选择柜架尺寸/);
+  assert.match(html, /<option value="custom">自定义尺寸<\/option>/);
+  assert.match(html, /IKEA · BILLY/);
+  assert.match(html, /MUJI · Stacking Shelf/);
+  assert.match(html, /Moduspace · SIXTH165/);
+  assert.match(html, /class="guide-set-thumbnail"/);
+  assert.match(html, /src="\/set-images\/21065-1\.jpg"/);
+  assert.match(html, /适配结果/);
+  assert.doesNotMatch(html, /href="https:\/\/(?:[^"/]+\.)?(?:ikea|muji|moduspace)\./i);
+});
+
+test("adds set thumbnails to the shallow cabinet guide", async () => {
+  const response = await render("/zh/guides/large-brick-sets-under-30cm-deep");
+  assert.equal(response.status, 200);
+  const html = (await response.text()).replaceAll("<!-- -->", "");
+  assert.match(html, /class="guide-set-thumbnail"/);
+  assert.match(html, /LEGO 套装 40179/);
+  assert.match(html, /src="\/set-images\/40179-1\.jpg"/);
 });

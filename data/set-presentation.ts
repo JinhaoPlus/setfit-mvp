@@ -29,7 +29,7 @@ export function longestDimension(set: DimensionFields) {
 }
 
 export function setImagePath(set: { set_id: string; image_available: boolean }) {
-  return set.image_available ? `/sets/${set.set_id}.jpg` : null;
+  return set.image_available ? `/set-images/${set.set_id}.jpg` : null;
 }
 
 export function formatCm(value: number) {

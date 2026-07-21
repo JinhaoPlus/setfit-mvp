@@ -31,6 +31,9 @@ test("keeps furniture presets as fixed-width horizontal cards", async () => {
   assert.match(stylesheet, /\.furniture-preset-list \{[^}]*display: flex;[^}]*overflow-x: auto;/);
   assert.match(stylesheet, /\.furniture-preset \{[^}]*width: 220px;[^}]*max-width: 78%;[^}]*flex: 0 0 220px;/);
   assert.doesNotMatch(stylesheet, /grid-auto-columns/);
+  assert.match(stylesheet, /\.hero \{[^}]*grid-template-columns: minmax\(0, \.84fr\) minmax\(0, 1\.16fr\);[^}]*align-items: start;/);
+  assert.match(stylesheet, /\.hero-copy \{[^}]*position: sticky;[^}]*top: 116px;/);
+  assert.match(stylesheet, /@media \(max-width: 900px\) \{[\s\S]*?\.hero-copy \{[^}]*position: static;/);
 });
 
 test("server-renders the English large-set homepage", async () => {

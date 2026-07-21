@@ -54,7 +54,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .header-unit-toggle button[aria-pressed="true"] { color: white; background: var(--ink); }
 .header-unit-toggle button:focus-visible { outline: 3px solid rgba(239,99,53,.3); outline-offset: 2px; }
 
-.hero { min-height: 700px; display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: clamp(46px, 7vw, 96px); padding-block: 74px 82px; }
+.hero { min-height: 700px; display: grid; grid-template-columns: minmax(0, .84fr) minmax(0, 1.16fr); align-items: start; gap: clamp(40px, 5.5vw, 76px); padding-block: 72px 92px; }
+.hero-copy { position: sticky; top: 116px; align-self: start; padding-top: 28px; }
 .hero-copy h1, .section h2, .page-title, .detail-title {
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 500;
@@ -79,7 +80,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .trust-row dd { margin: 4px 0 0; color: var(--ink-soft); font-size: .75rem; }
 
 .hero > *, .detail-content > *, .detail-calculator { min-width: 0; }
-.hero-tool { position: relative; min-width: 0; max-width: 100%; }
+.hero-tool { position: relative; min-width: 0; max-width: 100%; align-self: start; scroll-margin-top: 96px; }
 .hero-tool::before { content: ""; position: absolute; inset: -25px 25px 25px -25px; z-index: -1; border-radius: 32px; background-color: var(--mint); background-image: linear-gradient(rgba(21,37,29,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(21,37,29,.07) 1px, transparent 1px); background-size: 24px 24px; transform: rotate(-2deg); }
 .fit-card { width: 100%; min-width: 0; max-width: 100%; background: var(--white); border: 1px solid var(--ink); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
 .fit-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; padding: 25px 28px 21px; border-bottom: 1px solid var(--line); }
@@ -369,7 +370,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 900px) {
   .hero, .detail-grid, .detail-content, .evidence-section, .guide-body { grid-template-columns: 1fr; }
-  .hero { padding-top: 56px; }
+  .hero { gap: 58px; padding-top: 56px; }
+  .hero-copy { position: static; max-width: 760px; padding-top: 0; }
   .hero-tool { max-width: 660px; width: 100%; }
   .split-heading { grid-template-columns: 1fr; gap: 24px; }
   .set-grid { grid-template-columns: repeat(2, 1fr); }

@@ -109,8 +109,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .furniture-presets-heading h3 { margin: 4px 0 0; font-size: .98rem; letter-spacing: -.02em; }
 .furniture-preset-count { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; color: var(--ink-soft); background: var(--paper); font-size: .62rem; font-weight: 850; }
 .furniture-presets-intro { max-width: 550px; margin: 8px 0 0; color: var(--ink-soft); font-size: .72rem; line-height: 1.5; }
-.furniture-preset-list { width: 100%; min-width: 0; max-width: 100%; contain: inline-size; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, min(220px, 78%)); gap: 10px; margin-top: 13px; padding: 1px 1px 9px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: inline proximity; scrollbar-color: #aaa396 transparent; scrollbar-width: thin; }
-.furniture-preset { display: flex; min-width: 0; flex-direction: column; scroll-snap-align: start; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--white); transition: border-color .16s ease, box-shadow .16s ease; }
+.furniture-preset-list { width: 100%; min-width: 0; max-width: 100%; display: flex; gap: 10px; margin-top: 13px; padding: 1px 1px 9px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: inline proximity; scrollbar-color: #aaa396 transparent; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+.furniture-preset { display: flex; width: 220px; min-width: 0; max-width: 78%; flex: 0 0 220px; flex-direction: column; scroll-snap-align: start; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--white); transition: border-color .16s ease, box-shadow .16s ease; }
 .furniture-preset[data-active="true"] { border-color: var(--orange-dark); box-shadow: inset 0 0 0 1px var(--orange-dark); }
 .furniture-preset-button { flex: 1; display: flex; min-width: 0; flex-direction: column; padding: 0; border: 0; color: inherit; background: transparent; text-align: left; cursor: pointer; }
 .furniture-preset-button:focus-visible { outline: 3px solid rgba(239,99,53,.34); outline-offset: -3px; }
@@ -392,7 +392,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .hero-tool::before { inset: -14px 12px 18px -12px; }
   .trust-row div { padding-right: 18px; }
   .fit-card-header, .fit-form { padding-inline: 19px; }
-  .furniture-preset-list { grid-auto-columns: minmax(0, 78%); }
   .dimension-inputs { gap: 7px; }
   .fit-visual { padding-inline: 12px; }
   .fit-dimension-labels, .fit-dimension-row { grid-template-columns: 44px minmax(52px,1fr) minmax(52px,1fr) 64px; gap: 4px; padding-inline: 10px; }

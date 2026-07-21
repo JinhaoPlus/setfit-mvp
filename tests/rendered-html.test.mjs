@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path = "/") {
@@ -8,6 +9,13 @@ async function render(path = "/") {
   return worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
 }
 
+test("keeps furniture presets as fixed-width horizontal cards", async () => {
+  const stylesheet = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(stylesheet, /\.furniture-preset-list \{[^}]*display: flex;[^}]*overflow-x: auto;/);
+  assert.match(stylesheet, /\.furniture-preset \{[^}]*width: 220px;[^}]*max-width: 78%;[^}]*flex: 0 0 220px;/);
+  assert.doesNotMatch(stylesheet, /grid-auto-columns/);
+});
+
 test("server-renders the English large-set homepage", async () => {
   const response = await render("/en");
   assert.equal(response.status, 200);
@@ -16,6 +24,7 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /bricksfit/);
   assert.doesNotMatch(html, /Set(?:Fit)/);
   assert.match(html, /Will this set fit in your cabinet\?/);
+  assert.match(html, /<link rel="icon" href="[^"]*\/favicon\.svg" type="image\/svg\+xml"/);
   assert.match(html, /clear internal dimensions of your cabinet or shelf/);
   assert.match(html, /Proportional cabinet preview/);
   assert.match(html, /Search by set name or number/);

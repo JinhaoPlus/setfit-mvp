@@ -24,6 +24,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     metadataBase: new URL(origin),
     title: { default: t.meta.defaultTitle, template: "%s | bricksfit" },
     description: t.meta.defaultDescription,
+    icons: {
+      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+      shortcut: "/favicon.svg",
+    },
     openGraph: {
       title: t.meta.socialTitle,
       description: t.meta.socialDescription,

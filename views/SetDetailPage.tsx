@@ -3,18 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InfoTip } from "@/components/InfoTip";
+import { LocalizedDimensions, LocalizedMeasurement, LocalizedUnit } from "@/components/LocalizedMeasurement";
 import { ShelfFitCalculator } from "@/components/ShelfFitCalculator";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { localePath, localizedAlternates, localeSettings, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
-import { dimensionInfoText, formatCm, setImagePath } from "@/data/set-presentation";
+import { formatMeasurement } from "@/data/measurements";
+import { dimensionInfoText, setImagePath } from "@/data/set-presentation";
 import { calculatorSetOptions, getSetBySlug, hasPlanningDimensions, planningEnvelopeVolume, recommendedAxisSpace, type DisplaySet } from "@/data/sets";
 
 function dimensionDescription(set: DisplaySet, locale: Locale) {
   const t = getDictionary(locale);
   if (!hasPlanningDimensions(set)) return t.detail.metaNoFixed;
-  return `${t.common.height}${t.common.labelSeparator}${formatCm(set.corrected_height_cm)} cm${t.common.listSeparator}${t.common.width}${t.common.labelSeparator}${formatCm(set.corrected_width_cm)} cm${t.common.listSeparator}${t.common.depth}${t.common.labelSeparator}${formatCm(set.corrected_depth_cm)} cm`;
+  const localeConfig = localeSettings[locale];
+  const unit = localeConfig.defaultUnit;
+  return `${t.common.height}${t.common.labelSeparator}${formatMeasurement(set.corrected_height_cm, unit, localeConfig.numberLocale)} ${unit}${t.common.listSeparator}${t.common.width}${t.common.labelSeparator}${formatMeasurement(set.corrected_width_cm, unit, localeConfig.numberLocale)} ${unit}${t.common.listSeparator}${t.common.depth}${t.common.labelSeparator}${formatMeasurement(set.corrected_depth_cm, unit, localeConfig.numberLocale)} ${unit}`;
 }
 
 export function buildSetMetadata(slug: string, locale: Locale): Metadata {
@@ -40,8 +44,8 @@ function DimensionBoard({ set, locale }: { set: DisplaySet; locale: Locale }) {
   if (hasPlanningDimensions(set)) {
     return (
       <div className="dimension-board">
-        <div className="dimension-board-heading"><p>{t.detail.builtLabel}</p><InfoTip id={`detail-size-${set.set_id}`} text={dimensionInfoText(set, locale)} label={`${t.detail.info} ${set.name}`} /></div>
-        <div className="big-dimensions"><div><strong>{formatCm(set.corrected_height_cm)}</strong><span>{t.common.height}</span></div><div><strong>{formatCm(set.corrected_width_cm)}</strong><span>{t.common.width}</span></div><div><strong>{formatCm(set.corrected_depth_cm)}</strong><span>{t.common.depth}</span></div></div>
+        <div className="dimension-board-heading"><p>{t.detail.builtLabel} · <LocalizedUnit /></p><InfoTip id={`detail-size-${set.set_id}`} text={dimensionInfoText(set, locale)} label={`${t.detail.info} ${set.name}`} /></div>
+        <div className="big-dimensions"><div><strong><LocalizedMeasurement valueCm={set.corrected_height_cm} withUnit={false} /></strong><span>{t.common.height}</span></div><div><strong><LocalizedMeasurement valueCm={set.corrected_width_cm} withUnit={false} /></strong><span>{t.common.width}</span></div><div><strong><LocalizedMeasurement valueCm={set.corrected_depth_cm} withUnit={false} /></strong><span>{t.common.depth}</span></div></div>
       </div>
     );
   }
@@ -56,7 +60,9 @@ export function SetDetailPageContent({ slug, locale }: { slug: string; locale: L
   const hasDimensions = hasPlanningDimensions(set);
   const recommended = recommendedAxisSpace(set);
   const envelopeVolume = planningEnvelopeVolume(set);
-  const packageComplete = set.package_height_cm !== null && set.package_width_cm !== null && set.package_depth_cm !== null;
+  const packageDimensions = set.package_height_cm !== null && set.package_width_cm !== null && set.package_depth_cm !== null
+    ? { heightCm: set.package_height_cm, widthCm: set.package_width_cm, depthCm: set.package_depth_cm }
+    : null;
   const image = setImagePath(set);
 
   return (
@@ -73,8 +79,8 @@ export function SetDetailPageContent({ slug, locale }: { slug: string; locale: L
       </section>
 
       <section className="detail-content shell">
-        <article className="content-block"><h2>{t.detail.planningTitle}</h2>{hasDimensions && recommended ? <><p>{t.detail.modelListed} <strong>{formatCm(set.corrected_height_cm)} {localeConfig.axes.height} × {formatCm(set.corrected_width_cm)} {localeConfig.axes.width} × {formatCm(set.corrected_depth_cm)} {localeConfig.axes.depth} cm</strong>{t.common.sentenceEnd}</p><ul><li>{t.detail.startingSpace}{t.common.labelSeparator}{formatCm(recommended.heightCm)} {localeConfig.axes.height} × {formatCm(recommended.widthCm)} {localeConfig.axes.width} × {formatCm(recommended.depthCm)} {localeConfig.axes.depth} cm</li><li>{t.detail.volume}{t.common.labelSeparator}{envelopeVolume} L</li><li>{t.detail.movable}</li></ul></> : <p>{t.detail.noFixedBody}</p>}<a className="source-link" href={set.model_source_url} target="_blank" rel="noreferrer">{t.detail.sizeSource} ↗</a></article>
-        <article className="content-block"><h2>{t.detail.packageTitle}</h2>{packageComplete ? <><p>{t.detail.packageMeasures} <strong>{set.package_height_cm} {localeConfig.axes.height} × {set.package_width_cm} {localeConfig.axes.width} × {set.package_depth_cm} {localeConfig.axes.depth} cm</strong>{t.common.sentenceEnd}</p>{set.package_volume_l !== null ? <p>{t.detail.packageVolume}{t.common.labelSeparator}{set.package_volume_l} L{t.common.sentenceEnd}</p> : null}{set.package_weight_kg !== null ? <p>{t.detail.packageWeight}{t.common.labelSeparator}{set.package_weight_kg} kg{t.common.sentenceEnd}</p> : null}</> : <p>{t.detail.noPackage}</p>}<a className="source-link" href={set.brickset_url} target="_blank" rel="noreferrer">{t.detail.bricksetRecord} ↗</a><p className="data-date">{t.detail.packageSeparate}</p></article>
+        <article className="content-block"><h2>{t.detail.planningTitle}</h2>{hasDimensions && recommended ? <><p>{t.detail.modelListed} <strong><LocalizedDimensions dimensions={[{ valueCm: set.corrected_height_cm, axis: localeConfig.axes.height }, { valueCm: set.corrected_width_cm, axis: localeConfig.axes.width }, { valueCm: set.corrected_depth_cm, axis: localeConfig.axes.depth }]} /></strong>{t.common.sentenceEnd}</p><ul><li>{t.detail.startingSpace}{t.common.labelSeparator}<LocalizedDimensions dimensions={[{ valueCm: recommended.heightCm, axis: localeConfig.axes.height }, { valueCm: recommended.widthCm, axis: localeConfig.axes.width }, { valueCm: recommended.depthCm, axis: localeConfig.axes.depth }]} /></li><li>{t.detail.volume}{t.common.labelSeparator}{envelopeVolume} L</li><li>{t.detail.movable}</li></ul></> : <p>{t.detail.noFixedBody}</p>}<a className="source-link" href={set.model_source_url} target="_blank" rel="noreferrer">{t.detail.sizeSource} ↗</a></article>
+        <article className="content-block"><h2>{t.detail.packageTitle}</h2>{packageDimensions ? <><p>{t.detail.packageMeasures} <strong><LocalizedDimensions dimensions={[{ valueCm: packageDimensions.heightCm, axis: localeConfig.axes.height }, { valueCm: packageDimensions.widthCm, axis: localeConfig.axes.width }, { valueCm: packageDimensions.depthCm, axis: localeConfig.axes.depth }]} /></strong>{t.common.sentenceEnd}</p>{set.package_volume_l !== null ? <p>{t.detail.packageVolume}{t.common.labelSeparator}{set.package_volume_l} L{t.common.sentenceEnd}</p> : null}{set.package_weight_kg !== null ? <p>{t.detail.packageWeight}{t.common.labelSeparator}{set.package_weight_kg} kg{t.common.sentenceEnd}</p> : null}</> : <p>{t.detail.noPackage}</p>}<a className="source-link" href={set.brickset_url} target="_blank" rel="noreferrer">{t.detail.bricksetRecord} ↗</a><p className="data-date">{t.detail.packageSeparate}</p></article>
         {hasDimensions ? <div className="detail-calculator"><ShelfFitCalculator sets={calculatorSetOptions} locale={locale} initialSetNumber={set.set_number} /></div> : <div className="detail-calculator unavailable-calculator"><p className="eyebrow">{t.detail.calculatorUnavailable}</p><h2>{t.detail.noCalculator}</h2><p>{t.detail.noCalculatorCopy}</p></div>}
       </section>
     </main><SiteFooter locale={locale} /></>

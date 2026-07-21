@@ -47,7 +47,7 @@ test("renders a product page with plain built dimensions", async () => {
   assert.match(html, /<h1 class="detail-title">Titanic<\/h1>/);
   assert.match(html, /<title>Titanic 10294 \| SetFit<\/title>/);
   assert.match(html, /Built H × W × D/);
-  assert.match(html, /44(?:<!-- -->)? H × (?:<!-- -->)?16(?:<!-- -->)? W × (?:<!-- -->)?135(?:<!-- -->)? D cm/);
+  assert.match(html, /17\.3(?:<!-- -->)? H × (?:<!-- -->)?6\.3(?:<!-- -->)? W × (?:<!-- -->)?53\.1(?:<!-- -->)? D in/);
   assert.match(html, /alt="Titanic LEGO Set 10294"/);
   assert.match(html, /Will this set fit in your cabinet\?/);
   assert.match(html, /Internal width/);
@@ -61,7 +61,7 @@ test("uses description-derived H/W/D without a visible grade", async () => {
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /<h1 class="detail-title">The Lord of the Rings: Rivendell<\/h1>/);
-  assert.match(html, /39(?:<!-- -->)? H × (?:<!-- -->)?75(?:<!-- -->)? W × (?:<!-- -->)?50(?:<!-- -->)? D cm/);
+  assert.match(html, /15\.4(?:<!-- -->)? H × (?:<!-- -->)?29\.5(?:<!-- -->)? W × (?:<!-- -->)?19\.7(?:<!-- -->)? D in/);
   assert.match(html, /About the dimensions for The Lord of the Rings: Rivendell/);
   assert.match(html, /Reference reliability: high/);
   assert.match(html, /Will this set fit in your cabinet\?/);
@@ -72,7 +72,7 @@ test("uses completed planning dimensions when API size was missing", async () =>
   const response = await render("/en/sets/10189-taj-mahal-dimensions");
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
-  assert.match(html, /41(?:<!-- -->)? H × (?:<!-- -->)?51(?:<!-- -->)? W × (?:<!-- -->)?51(?:<!-- -->)? D cm/);
+  assert.match(html, /16\.1(?:<!-- -->)? H × (?:<!-- -->)?20\.1(?:<!-- -->)? W × (?:<!-- -->)?20\.1(?:<!-- -->)? D in/);
   assert.match(html, /Will this set fit in your cabinet\?/);
 });
 
@@ -96,6 +96,7 @@ test("renders a separately indexable German version", async () => {
   assert.match(html, /Passt dieses Set in deinen Schrank\?/);
   assert.match(html, /aria-label="Maßeinheit"/);
   assert.match(html, /aria-pressed="true">CM<\/button>/);
+  assert.match(html, /44(?:<!-- -->)? H × (?:<!-- -->)?16(?:<!-- -->)? B × (?:<!-- -->)?135(?:<!-- -->)? T cm/);
   assert.match(html, /hrefLang="en"/);
   assert.match(html, /hrefLang="de"/);
   assert.match(html, /rel="canonical" href="http:\/\/localhost(?::3000)?\/de\/sets\/10294-titanic-dimensions"/);
@@ -112,6 +113,7 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /柜子是否能装得下/);
   assert.match(html, /aria-label="测量单位"/);
   assert.match(html, /aria-pressed="true">CM<\/button>/);
+  assert.match(html, /44(?:<!-- -->)? 高 × (?:<!-- -->)?16(?:<!-- -->)? 宽 × (?:<!-- -->)?135(?:<!-- -->)? 深 cm/);
   assert.match(html, /请输入柜子或书架可用的内部净尺寸/);
   assert.match(html, /内部净宽/);
   assert.match(html, /hrefLang="en"/);

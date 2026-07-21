@@ -2,8 +2,8 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 import { siteConfig } from "@/config/site";
+import type { MeasurementUnit } from "@/data/measurements";
 
-export type MeasurementUnit = "cm" | "in";
 export type ShelfDimensions = { widthCm: number; depthCm: number; heightCm: number };
 export type MeasurementPreferences = ShelfDimensions & { unit: MeasurementUnit };
 
@@ -72,4 +72,6 @@ export function useMeasurementPreferences(defaultUnit: MeasurementUnit) {
   const snapshot = useSyncExternalStore(subscribe, readClientSnapshot, readServerSnapshot);
   return JSON.parse(snapshot) as MeasurementPreferences;
 }
+
+export type { MeasurementUnit } from "@/data/measurements";
 

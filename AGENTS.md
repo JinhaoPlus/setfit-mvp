@@ -156,7 +156,11 @@ npm test
   - 选项显示 emoji 国旗和语言名称。
 - `components/MeasurementUnitSwitcher.tsx`
   - 顶栏唯一的 CM/IN 控件；
-  - 使用当前 locale 的默认单位，并允许浏览器保存的用户偏好覆盖默认值。
+  - 使用当前 locale 的默认单位，并允许浏览器保存的用户偏好覆盖默认值；
+  - 单位切换必须作用于全站所有可见长度，包括首页卡片与对比、套装详情、包装与建议预留空间、指南表格和适配计算器，不能只改变计算器。
+- `components/MeasurementProvider.tsx` 与 `components/LocalizedMeasurement.tsx`
+  - 为全站可见长度提供同一个浏览器单位状态和本地化格式；
+  - SEO metadata 和服务端描述使用语言版本的默认单位，浏览器保存的偏好仅覆盖交互页面上的显示，避免 metadata 因个人浏览器状态而不稳定。
 - `components/measurement-preferences.ts`
   - 柜架尺寸和单位的共享浏览器状态；
   - 负责校验、localStorage 保存、跨页面恢复和存储异常回退。

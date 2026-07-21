@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { LocalizedDimensions } from "@/components/LocalizedMeasurement";
 import { ShelfFitCalculator } from "@/components/ShelfFitCalculator";
-import { SetCard } from "@/components/SetCard";
+import { SetCard, type SetCardSet } from "@/components/SetCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { localePath, type Locale } from "@/config/site";
@@ -9,7 +10,21 @@ import { calculatorSetOptions, displaySets, libraryStats } from "@/data/sets";
 
 export function HomePageContent({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
-  const featured = displaySets.slice(0, 6);
+  const featured: SetCardSet[] = displaySets.slice(0, 6).map((set) => ({
+    set_id: set.set_id,
+    set_number: set.set_number,
+    name: set.name,
+    theme: set.theme,
+    pieces: set.pieces,
+    rank_by_pieces: set.rank_by_pieces,
+    slug: set.slug,
+    image_available: set.image_available,
+    corrected_height_cm: set.corrected_height_cm,
+    corrected_width_cm: set.corrected_width_cm,
+    corrected_depth_cm: set.corrected_depth_cm,
+    correction_method: set.correction_method,
+    correction_confidence: set.correction_confidence,
+  }));
 
   return (
     <>
@@ -90,11 +105,11 @@ export function HomePageContent({ locale }: { locale: Locale }) {
           </div>
           <div className="comparison-card" aria-label={t.home.comparisonAria}>
             <div className="comparison-row muted-row">
-              <span>{t.home.retailPackage}</span><strong>47.5 × 58.5 × 38.5 cm</strong>
+              <span>{t.home.retailPackage}</span><strong><LocalizedDimensions dimensions={[{ valueCm: 47.5 }, { valueCm: 58.5 }, { valueCm: 38.5 }]} /></strong>
               <small>{t.home.packageHwd}</small>
             </div>
             <div className="comparison-row active-row">
-              <span>{t.home.builtModel}</span><strong>44 × 16 × 135 cm</strong>
+              <span>{t.home.builtModel}</span><strong><LocalizedDimensions dimensions={[{ valueCm: 44 }, { valueCm: 16 }, { valueCm: 135 }]} /></strong>
               <small>{t.home.officialHwd}</small>
             </div>
             <p className="fine-print">{t.common.set} 10294{t.common.sentenceEnd}</p>

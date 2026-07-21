@@ -13,7 +13,7 @@ bricksfit 是一个面向搜索流量和展示空间规划的独立 LEGO 套装�
 
 当前是本地 MVP，默认地址为 `http://localhost:3000`。除非用户明确要求，不要部署、发布、购买服务或接入生产数据库。
 
-当前发布语言是英语、德语和简体中文，但架构必须继续允许独立添加日语、繁体中文及其他语言。每个语言版本只能显示自己的界面文案；英文和德文页面不应泄露中文，中文页面也不应回退为英文界面文案。语言切换器中的原生语言名，以及套装名称、主题、品牌名和外部来源名可以保留原文。
+当前发布语言是英语、德语和简体中文，但架构必须继续允许独立添加日语、繁体中文及其他语言。每个语言版本只能显示自己的界面文案；英文和德文页面不应泄露中文，中文页面也不应回退为英文界面文案。语言切换器中的原生语言名、主题、品牌名和外部来源名可以保留原文；套装名称应优先使用当前语言的官方本地化映射，映射缺失时才回退英文主数据名称。
 
 ## 2. 不可破坏的产品约束
 
@@ -48,6 +48,8 @@ bricksfit 是一个面向搜索流量和展示空间规划的独立 LEGO 套装�
 - 每个发布语言使用可索引的路径前缀，例如 `/en/...`、`/de/...`、`/zh/...`。
 - 语言切换器要保留当前页面，只替换 locale 路径段，并显示对应 emoji 国旗。
 - 每个 locale 必须有独立维护的完整文案和 SEO metadata，不能依赖运行时机器翻译。
+- 套装名称也不能机器翻译。`data/set-localized-names.json` 保存按 locale 和 `set_id` 组织的官方名称；页面正文、图片 alt、计算器、指南、详情 metadata 均应通过本地化套装目录读取，缺失时使用主数据英文名。
+- 套装 slug 永远继续基于英文主数据名称生成。本地化名称更新不能改变现有 URL，避免不同语言之间的 URL 漂移和 SEO 迁移成本。
 - 新增语言时，canonical、`hreflang`、`x-default`、`<html lang>`、静态参数和 sitemap 必须同步生效。
 - 无语言前缀的旧路径继续重定向到默认英语版本。
 - 生产环境必须设置正确的 `NEXT_PUBLIC_SITE_URL`，否则 robots/sitemap 会回退到 `http://localhost:3000`。
@@ -94,6 +96,16 @@ npm test
 6. 提供单套装查询、外包络体积和建议空间等函数。
 
 网站启动和浏览页面时不会实时请求 Brickset、LEGO API 或其他线上数据库。外部 URL 仅用于署名和来源跳转。
+
+### 套装名称本地化
+
+- `data/set-localized-names.json` 是独立于尺寸主数据的套装名称配置，键为网站 locale，再以 `set_id` 映射到官方名称；不要把本地化名称回写进 `large-top500.json`。
+- 英文名称来自 `large-top500.json`，也是缺失映射时的统一兜底与稳定 slug 来源。
+- 德语和简体中文名称由 `scripts/update-set-localized-names.mjs` 从 LEGO 官方 Customer Service building-instructions GraphQL 数据的 `data.name` 字段获取，地区分别使用 `de-DE` 和 `zh-CN`。脚本只接受状态正常、返回编号一致且非空的名称，不进行机器翻译。
+- 主数据中重复使用同一个 `set_number` 的不同版本会跳过自动映射，因为 LEGO 接口只能按编号查询，无法可靠区分版本；这类记录使用英文兜底，除非以后取得可区分版本的官方来源。
+- 少量旧记录在名称字段返回营销句而不是产品名，更新脚本应拒绝这类值并使用英文兜底。不要为了提高覆盖率使用猜测或翻译值。
+- 手动刷新映射使用 `npm run names:update`。这是数据维护命令，不是 `npm run build` 的联网步骤；正常构建必须只读取已经提交的 JSON 配置，保证可复现和离线构建。
+- `data/set-names.ts` 是名称读取和英文兜底入口，`data/sets.ts` 的 `getLocalizedSetCatalog(locale)` 与 `getLocalizedSetBySlug(slug, locale)` 为页面提供已本地化的数据。新增展示套装名的页面时应使用这些入口。
 
 ### 数据依据文件
 
@@ -156,6 +168,9 @@ npm test
 - `data/i18n.ts`
   - 每个语言独立的完整 UI、页面、SEO、提示和隐私文案；
   - `getDictionary(locale)` 是统一读取入口。
+- `data/set-localized-names.json` 与 `data/set-names.ts`
+  - 前者保存可独立维护、由官方来源取得的套装名称；后者按 locale 读取并执行英文兜底；
+  - 新增语言时可先发布 UI 文案，再逐步补充名称映射；名称缺失不会阻止构建。
 - `components/LanguageSwitcher.tsx`
   - 保留当前 pathname 的语言切换；
   - 写入语言 Cookie；
@@ -176,9 +191,10 @@ npm test
 1. 在 `siteConfig.locales` 注册语言代码、原生语言名和旗帜；
 2. 在 `localeSettings` 添加数字格式、Open Graph locale、轴标签和默认单位；
 3. 在 `data/i18n.ts` 增加与现有字典结构完全一致的内容块；
-4. 执行 TypeScript、lint、构建和渲染测试；
-5. 检查新语言页面的 `<html lang>`、canonical、`hreflang`、sitemap、切换器和同页跳转；
-6. 检查所有可见字符串，确保没有回退成不相关语言。
+4. 在 `scripts/update-set-localized-names.mjs` 注册该语言对应的 LEGO 地区代码并生成官方名称映射；若暂时没有映射，确认英文兜底符合预期；
+5. 执行 TypeScript、lint、构建和渲染测试；
+6. 检查新语言页面的 `<html lang>`、canonical、`hreflang`、sitemap、切换器和同页跳转；
+7. 检查所有可见字符串，确保没有回退成不相关语言（套装名称按上述规则允许英文兜底）。
 
 不要在组件中写 `if (locale === "de")` 之类的语言分支来放文案；应该扩展字典或 locale settings。
 

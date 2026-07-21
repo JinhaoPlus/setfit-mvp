@@ -179,7 +179,9 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /<html lang="zh"/);
-  assert.match(html, /<h1 class="detail-title">Titanic<\/h1>/);
+  assert.match(html, /<h1 class="detail-title">泰坦尼克号<\/h1>/);
+  assert.match(html, /<title>泰坦尼克号 10294 \| bricksfit<\/title>/);
+  assert.match(html, /alt="泰坦尼克号 LEGO 套装 10294"/);
   assert.doesNotMatch(html, /位 Brickset 拥有者/);
   assert.match(html, /柜子是否能装得下/);
   assert.match(html, /bricksfit/);
@@ -210,6 +212,22 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /🇨🇳 中文/);
   assert.doesNotMatch(html, /Will this set fit in your cabinet\?|Passt dieses Set in deinen Schrank\?/);
   assert.doesNotMatch(html, /2026-07-19/);
+});
+
+test("uses official localized set-name mappings with an English fallback", async () => {
+  const nameConfig = JSON.parse(await readFile(new URL("../data/set-localized-names.json", import.meta.url), "utf8"));
+  assert.equal(nameConfig.source.provider, "LEGO");
+  assert.equal(nameConfig.source.operation, "customerService.getBuildingInstructionsForSet");
+  assert.equal(nameConfig.locales.de["31203-1"], "Weltkarte");
+  assert.equal(nameConfig.locales.zh["21065-1"], "圣家族大教堂");
+  assert.equal(nameConfig.locales.zh["10294-1"], "泰坦尼克号");
+  assert.equal(nameConfig.locales.zh["5491-1"], undefined);
+  assert.equal(nameConfig.locales.zh["5491-2"], undefined);
+
+  const fallbackResponse = await render("/zh/sets/10189-taj-mahal-dimensions");
+  assert.equal(fallbackResponse.status, 200);
+  const fallbackHtml = (await fallbackResponse.text()).replaceAll("<!-- -->", "");
+  assert.match(fallbackHtml, /<h1 class="detail-title">Taj Mahal<\/h1>/);
 });
 
 test("publishes an accurate privacy and advertising status notice", async () => {

@@ -1,3 +1,5 @@
+import { siteConfig, type Locale } from "@/config/site";
+import { withLocalizedSetName } from "@/data/set-names";
 import rawData from "./large-top500.json";
 
 export type ModelEvidence = "A" | "B" | "A-partial" | "A-multi" | "missing";
@@ -96,17 +98,45 @@ export function hasPlanningDimensions(set: DisplaySet): set is PlanningSet {
 
 export const planningSets = displaySets.filter(hasPlanningDimensions);
 
-export const calculatorSetOptions = planningSets.map((set) => ({
-  set_id: set.set_id,
-  set_number: set.set_number,
-  name: set.name,
-  heightCm: set.corrected_height_cm,
-  widthCm: set.corrected_width_cm,
-  depthCm: set.corrected_depth_cm,
-  imageAvailable: set.image_available,
-  correction_method: set.correction_method,
-  correction_confidence: set.correction_confidence,
-}));
+function toCalculatorSetOption(set: PlanningSet) {
+  return {
+    set_id: set.set_id,
+    set_number: set.set_number,
+    name: set.name,
+    heightCm: set.corrected_height_cm,
+    widthCm: set.corrected_width_cm,
+    depthCm: set.corrected_depth_cm,
+    imageAvailable: set.image_available,
+    correction_method: set.correction_method,
+    correction_confidence: set.correction_confidence,
+  };
+}
+
+export const calculatorSetOptions = planningSets.map(toCalculatorSetOption);
+
+type LocalizedSetCatalog = {
+  displaySets: DisplaySet[];
+  planningSets: PlanningSet[];
+  calculatorSetOptions: ReturnType<typeof toCalculatorSetOption>[];
+};
+
+const localizedSetCatalogs = Object.fromEntries(siteConfig.locales.map(({ code }) => {
+  const localizedDisplaySets = displaySets.map((set) => withLocalizedSetName(set, code));
+  const localizedPlanningSets = localizedDisplaySets.filter(hasPlanningDimensions);
+  return [code, {
+    displaySets: localizedDisplaySets,
+    planningSets: localizedPlanningSets,
+    calculatorSetOptions: localizedPlanningSets.map(toCalculatorSetOption),
+  }];
+})) as Record<Locale, LocalizedSetCatalog>;
+
+export function getLocalizedSetCatalog(locale: Locale) {
+  return localizedSetCatalogs[locale];
+}
+
+export function getLocalizedSetBySlug(slug: string, locale: Locale) {
+  return localizedSetCatalogs[locale].displaySets.find((set) => set.slug === slug);
+}
 
 export const libraryStats = {
   total: displaySets.length,

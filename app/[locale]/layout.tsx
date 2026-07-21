@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { Analytics } from "@vercel/analytics/next";
 import { AnalyticsConsent } from "@/components/AnalyticsConsent";
 import { MeasurementProvider } from "@/components/MeasurementProvider";
 import { isLocale, localeSettings, siteConfig } from "@/config/site";
@@ -48,6 +49,7 @@ export default async function LocaleRootLayout({ children, params }: Readonly<{ 
       <body>
         <MeasurementProvider locale={locale}>{children}</MeasurementProvider>
         <AnalyticsConsent copy={t.analyticsConsent} privacyHref={`/${locale}/privacy`} />
+        <Analytics />
       </body>
     </html>
   );

@@ -54,6 +54,13 @@ capture, and feature flags are disabled.
 For EU traffic, use the EU ingestion host and disable IP capture in the PostHog
 project settings if required by your privacy policy.
 
+## Vercel Web Analytics
+
+The app includes `@vercel/analytics` in the locale root layout, so page views
+and client-side route changes are tracked after deployment. Enable Web Analytics
+for the project in the Vercel dashboard and redeploy before expecting data. No
+environment variable is required.
+
 ## Useful Commands
 
 - `npm run dev`: start local development

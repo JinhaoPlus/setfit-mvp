@@ -143,7 +143,9 @@ test("explains that saved cabinet dimensions stay in the browser", async () => {
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /cabinet or shelf measurements and selected unit are stored only in this browser’s local storage/);
   assert.match(html, /they are not sent to a server/);
-  assert.match(html, /Optional product analytics/);
-  assert.match(html, /asks for permission before analytics starts/);
+  assert.match(html, /Website analytics/);
+  assert.match(html, /Vercel Web Analytics automatically records anonymous page views/);
+  assert.match(html, /does not use third-party cookies/);
+  assert.match(html, /separately asks for permission before product analytics starts/);
   assert.match(html, /session replay, exception capture, heatmaps and performance capture are disabled/);
 });

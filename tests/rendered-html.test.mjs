@@ -20,6 +20,13 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /Proportional cabinet preview/);
   assert.match(html, /Three-dimensional proportional cabinet and set preview/);
   assert.match(html, /Size comparison/);
+  assert.match(html, /Start with a cabinet preset/);
+  assert.match(html, /Published outside size/);
+  assert.match(html, /Estimated clear space/);
+  assert.match(html, /Published clear space/);
+  assert.match(html, /\/furniture-presets\/ikea-billy\.jpg/);
+  assert.match(html, /\/furniture-presets\/muji-stacking-shelf\.jpg/);
+  assert.equal((html.match(/class="furniture-preset"/g) ?? []).length, 7);
   assert.match(html, /<dt>433<\/dt><dd>built H\/W\/D records<\/dd>/);
   assert.match(html, /Titanic retail package/);
   assert.match(html, /alt="Sagrada Família LEGO Set 21065"/);
@@ -128,6 +135,11 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /按比例展示柜内空间/);
   assert.match(html, /柜子与套装的三维比例预览/);
   assert.match(html, /尺寸对比/);
+  assert.match(html, /从柜架预设开始/);
+  assert.match(html, /官网外部尺寸/);
+  assert.match(html, /预估内部净空/);
+  assert.match(html, /官网内部净空/);
+  assert.match(html, /最终决定前，请实测组装后的柜体/);
   assert.match(html, /hrefLang="en"/);
   assert.match(html, /hrefLang="de"/);
   assert.match(html, /hrefLang="zh"/);

@@ -6,6 +6,7 @@ import { InfoTip } from "@/components/InfoTip";
 import { useMeasurementContext } from "@/components/MeasurementProvider";
 import { saveMeasurementPreferences } from "@/components/measurement-preferences";
 import { localeSettings, siteConfig, type Locale } from "@/config/site";
+import { furniturePresets, type FurniturePreset } from "@/data/furniture-presets";
 import { getDictionary } from "@/data/i18n";
 import { formatMeasurement, fromCm, toCm } from "@/data/measurements";
 import { dimensionInfoText } from "@/data/set-presentation";
@@ -38,6 +39,10 @@ function fitScore(set: OrientedDimensions, cabinet: OrientedDimensions) {
   }, 0);
 }
 
+function sameDimensions(first: OrientedDimensions, second: OrientedDimensions) {
+  return (["widthCm", "depthCm", "heightCm"] as const).every((axis) => Math.abs(first[axis] - second[axis]) < 0.001);
+}
+
 export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }: { sets: CalculatorSet[]; locale: Locale; initialSetNumber?: string }) {
   const dictionary = getDictionary(locale);
   const t = dictionary.calculator;
@@ -46,6 +51,7 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
   const [setNumber, setSetNumber] = useState(safeInitialNumber);
   const { unit, widthCm: shelfWidthCm, depthCm: shelfDepthCm, heightCm: shelfHeightCm, numberLocale } = useMeasurementContext();
   const shelf = { widthCm: shelfWidthCm, depthCm: shelfDepthCm, heightCm: shelfHeightCm };
+  const activeFurniturePreset = furniturePresets.find((preset) => sameDimensions(preset.planningClearCm, shelf));
   const selected = sets.find((set) => set.set_number === setNumber) ?? sets[0];
   const { widthCm, depthCm, heightCm } = selected;
 
@@ -100,11 +106,59 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
     saveMeasurementPreferences({ ...shelf, [key]: Number.isFinite(parsed) ? toCm(parsed, unit) : 0, unit });
   };
 
+  const applyFurniturePreset = (preset: FurniturePreset) => {
+    saveMeasurementPreferences({ ...preset.planningClearCm, unit });
+  };
+
+  const furnitureDimensions = (dimensions: OrientedDimensions) => `${localeConfig.axes.width} ${formatMeasurement(dimensions.widthCm, unit, numberLocale)} × ${localeConfig.axes.depth} ${formatMeasurement(dimensions.depthCm, unit, numberLocale)} × ${localeConfig.axes.height} ${formatMeasurement(dimensions.heightCm, unit, numberLocale)} ${unit}`;
+
   return (
     <div className="fit-card">
       <div className="fit-card-header"><div><h2>{t.title}</h2><p>{t.intro}</p></div></div>
       <div className="fit-form">
         <div className="field"><label htmlFor={`set-${safeInitialNumber}`}>{t.choose}</label><select id={`set-${safeInitialNumber}`} value={setNumber} onChange={(event) => setSetNumber(event.target.value)}>{sets.map((set) => <option key={set.set_number} value={set.set_number}>#{set.set_number} · {set.name}</option>)}</select></div>
+        <section className="furniture-presets" aria-labelledby={`furniture-presets-title-${safeInitialNumber}`}>
+          <div className="furniture-presets-heading">
+            <div>
+              <span className="fit-visual-kicker">{t.presetKicker}</span>
+              <h3 id={`furniture-presets-title-${safeInitialNumber}`}>{t.presetTitle}</h3>
+            </div>
+            <span className="furniture-preset-count">{furniturePresets.length} {t.presetCount}</span>
+          </div>
+          <p className="furniture-presets-intro">{t.presetIntro}</p>
+          <div className="furniture-preset-list">
+            {furniturePresets.map((preset) => {
+              const isActive = activeFurniturePreset?.id === preset.id;
+              return (
+                <article className="furniture-preset" data-active={isActive} key={preset.id}>
+                  <button
+                    type="button"
+                    className="furniture-preset-button"
+                    aria-label={`${t.presetApply}${dictionary.common.labelSeparator}${preset.brand} ${preset.name}`}
+                    aria-pressed={isActive}
+                    onClick={() => applyFurniturePreset(preset)}
+                  >
+                    <span className="furniture-preset-image">
+                      <Image src={preset.imagePath} alt={`${preset.brand} ${preset.name} ${t.presetImage}`} fill unoptimized sizes="190px" />
+                    </span>
+                    <span className="furniture-preset-copy">
+                      <span className="furniture-preset-brand">{preset.brand} · {preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span>
+                      <strong>{preset.name}</strong>
+                      <span className="furniture-preset-clear-label">{preset.publishedClearSpace ? t.presetClearPublished : t.presetClear}</span>
+                      <span className="furniture-preset-dimensions">{furnitureDimensions(preset.planningClearCm)}</span>
+                      <span className="furniture-preset-action">{isActive ? t.presetApplied : t.presetApply}</span>
+                    </span>
+                  </button>
+                  <div className="furniture-preset-source">
+                    <span>{t.presetOuter}{dictionary.common.labelSeparator}{furnitureDimensions(preset.publishedOuterCm)}</span>
+                    <a href={preset.sourceUrl} target="_blank" rel="noreferrer">{t.presetSource} ↗</a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+          <p className="furniture-presets-note">{t.presetNote}</p>
+        </section>
         <div className="dimension-inputs">{(["widthCm", "depthCm", "heightCm"] as const).map((key) => { const label = key === "widthCm" ? t.internalWidth : key === "depthCm" ? t.internalDepth : t.internalHeight; return <div className="field" key={key}><label htmlFor={`${key}-${safeInitialNumber}`}>{label}</label><div className="input-wrap"><input id={`${key}-${safeInitialNumber}`} min="0" step="0.1" inputMode="decimal" type="number" value={shown(fromCm(shelf[key], unit))} onChange={(event) => updateShelf(key, event.target.value)} /><span className="input-unit">{unit}</span></div></div>; })}</div>
         <section className="fit-visual" aria-labelledby={`fit-visual-title-${safeInitialNumber}`}>
           <div className="fit-visual-heading">

@@ -3,20 +3,28 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { localePath, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
+import { getInformationPage, type InformationPageName } from "@/data/information-pages";
 
-export function PrivacyPageContent({ locale }: { locale: Locale }) {
-  const t = getDictionary(locale).privacy;
+export function InformationPageContent({ locale, page }: { locale: Locale; page: InformationPageName }) {
+  const t = getDictionary(locale);
+  const content = getInformationPage(locale, page);
+
   return (
     <>
       <SiteHeader locale={locale} />
       <main className="inner-main">
         <section className="page-hero shell">
-          <p className="eyebrow">{t.eyebrow}</p>
-          <h1 className="page-title">{t.title}</h1>
-          <p className="page-intro">{t.copy}</p>
+          <nav className="breadcrumb" aria-label={t.common.breadcrumb}>
+            <Link href={localePath(locale)}>{t.common.home}</Link>
+            <span>/</span>
+            <span>{content.shortTitle}</span>
+          </nav>
+          <p className="eyebrow">{content.eyebrow}</p>
+          <h1 className="page-title">{content.title}</h1>
+          <p className="page-intro">{content.intro}</p>
         </section>
         <section className="information-sections shell">
-          {t.sections.map((section) => (
+          {content.sections.map((section) => (
             <article className="information-section" key={section.title}>
               <h2>{section.title}</h2>
               {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}

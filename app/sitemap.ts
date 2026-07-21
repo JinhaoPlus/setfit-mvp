@@ -4,7 +4,19 @@ import { displaySets } from "@/data/sets";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteOrigin();
-  const staticPages = ["", "/sets", "/methodology", "/privacy", "/guides/sets-for-ikea-billy", "/guides/large-brick-sets-under-30cm-deep"];
+  const staticPages = [
+    "",
+    "/sets",
+    "/methodology",
+    "/about",
+    "/contact",
+    "/sources",
+    "/terms",
+    "/privacy",
+    "/guides/how-to-measure-a-display-cabinet",
+    "/guides/sets-for-ikea-billy",
+    "/guides/large-brick-sets-under-30cm-deep",
+  ];
   const paths = [...staticPages, ...displaySets.map((set) => `/sets/${set.slug}`)];
   return paths.flatMap((path) => {
     const languages = {

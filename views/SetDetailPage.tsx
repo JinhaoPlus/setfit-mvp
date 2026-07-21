@@ -8,6 +8,7 @@ import { ShelfFitCalculator } from "@/components/ShelfFitCalculator";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { localePath, localizedAlternates, localeSettings, type Locale } from "@/config/site";
+import { detailGuidance } from "@/data/detail-guidance";
 import { getDictionary } from "@/data/i18n";
 import { formatMeasurement } from "@/data/measurements";
 import { dimensionInfoText, setImagePath } from "@/data/set-presentation";
@@ -54,6 +55,7 @@ function DimensionBoard({ set, locale }: { set: DisplaySet; locale: Locale }) {
 
 export function SetDetailPageContent({ slug, locale }: { slug: string; locale: Locale }) {
   const t = getDictionary(locale);
+  const guidance = detailGuidance[locale];
   const localeConfig = localeSettings[locale];
   const set = getSetBySlug(slug);
   if (!set) notFound();
@@ -79,8 +81,9 @@ export function SetDetailPageContent({ slug, locale }: { slug: string; locale: L
       </section>
 
       <section className="detail-content shell">
-        <article className="content-block"><h2>{t.detail.planningTitle}</h2>{hasDimensions && recommended ? <><p>{t.detail.modelListed} <strong><LocalizedDimensions dimensions={[{ valueCm: set.corrected_height_cm, axis: localeConfig.axes.height }, { valueCm: set.corrected_width_cm, axis: localeConfig.axes.width }, { valueCm: set.corrected_depth_cm, axis: localeConfig.axes.depth }]} /></strong>{t.common.sentenceEnd}</p><ul><li>{t.detail.startingSpace}{t.common.labelSeparator}<LocalizedDimensions dimensions={[{ valueCm: recommended.heightCm, axis: localeConfig.axes.height }, { valueCm: recommended.widthCm, axis: localeConfig.axes.width }, { valueCm: recommended.depthCm, axis: localeConfig.axes.depth }]} /></li><li>{t.detail.volume}{t.common.labelSeparator}{envelopeVolume} L</li><li>{t.detail.movable}</li></ul></> : <p>{t.detail.noFixedBody}</p>}<a className="source-link" href={set.model_source_url} target="_blank" rel="noreferrer">{t.detail.sizeSource} ↗</a></article>
+        <article className="content-block"><h2>{t.detail.planningTitle}</h2>{hasDimensions && recommended ? <><p>{t.detail.modelListed} <strong><LocalizedDimensions dimensions={[{ valueCm: set.corrected_height_cm, axis: localeConfig.axes.height }, { valueCm: set.corrected_width_cm, axis: localeConfig.axes.width }, { valueCm: set.corrected_depth_cm, axis: localeConfig.axes.depth }]} /></strong>{t.common.sentenceEnd}</p><ul><li>{t.detail.startingSpace}{t.common.labelSeparator}<LocalizedDimensions dimensions={[{ valueCm: recommended.heightCm, axis: localeConfig.axes.height }, { valueCm: recommended.widthCm, axis: localeConfig.axes.width }, { valueCm: recommended.depthCm, axis: localeConfig.axes.depth }]} /></li><li>{t.detail.volume}{t.common.labelSeparator}{envelopeVolume} L</li><li>{t.detail.movable}</li></ul></> : <><p>{t.detail.noFixedBody}</p><h3>{guidance.multiModelTitle}</h3><ol className="planning-checklist">{guidance.multiModelItems.map((item) => <li key={item}>{item}</li>)}</ol></>}<a className="source-link" href={set.model_source_url} target="_blank" rel="noreferrer">{t.detail.sizeSource} ↗</a></article>
         <article className="content-block"><h2>{t.detail.packageTitle}</h2>{packageDimensions ? <><p>{t.detail.packageMeasures} <strong><LocalizedDimensions dimensions={[{ valueCm: packageDimensions.heightCm, axis: localeConfig.axes.height }, { valueCm: packageDimensions.widthCm, axis: localeConfig.axes.width }, { valueCm: packageDimensions.depthCm, axis: localeConfig.axes.depth }]} /></strong>{t.common.sentenceEnd}</p>{set.package_volume_l !== null ? <p>{t.detail.packageVolume}{t.common.labelSeparator}{set.package_volume_l} L{t.common.sentenceEnd}</p> : null}{set.package_weight_kg !== null ? <p>{t.detail.packageWeight}{t.common.labelSeparator}{set.package_weight_kg} kg{t.common.sentenceEnd}</p> : null}</> : <p>{t.detail.noPackage}</p>}<a className="source-link" href={set.brickset_url} target="_blank" rel="noreferrer">{t.detail.bricksetRecord} ↗</a><p className="data-date">{t.detail.packageSeparate}</p></article>
+        <article className="content-block detail-planning-note"><h2>{guidance.limitsTitle}</h2><p>{guidance.limitsCopy}</p><Link className="source-link" href={localePath(locale, "/guides/how-to-measure-a-display-cabinet")}>{guidance.measureLink} →</Link></article>
         {hasDimensions ? <div className="detail-calculator"><ShelfFitCalculator sets={calculatorSetOptions} locale={locale} initialSetNumber={set.set_number} /></div> : <div className="detail-calculator unavailable-calculator"><p className="eyebrow">{t.detail.calculatorUnavailable}</p><h2>{t.detail.noCalculator}</h2><p>{t.detail.noCalculatorCopy}</p></div>}
       </section>
     </main><SiteFooter locale={locale} /></>

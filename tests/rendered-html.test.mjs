@@ -13,12 +13,18 @@ test("publishes one canonical multilingual sitemap", async () => {
   const sitemapResponse = await render("/sitemap.xml");
   assert.equal(sitemapResponse.status, 200);
   const sitemap = await sitemapResponse.text();
-  assert.equal((sitemap.match(/<url>/g) ?? []).length, 1518);
+  const setRecords = JSON.parse(await readFile(new URL("../data/large-top500.json", import.meta.url), "utf8"));
+  const expectedStaticPages = 11;
+  assert.equal((sitemap.match(/<url>/g) ?? []).length, (setRecords.length + expectedStaticPages) * 3);
   assert.match(sitemap, /<loc>http:\/\/localhost:3000\/en\/<\/loc>/);
   assert.match(sitemap, /hreflang="en" href="http:\/\/localhost:3000\/en\/"/);
   assert.match(sitemap, /hreflang="de" href="http:\/\/localhost:3000\/de\/"/);
   assert.match(sitemap, /hreflang="zh" href="http:\/\/localhost:3000\/zh\/"/);
   assert.match(sitemap, /hreflang="x-default" href="http:\/\/localhost:3000\/en\/"/);
+  assert.match(sitemap, /<loc>http:\/\/localhost:3000\/en\/about<\/loc>/);
+  assert.match(sitemap, /<loc>http:\/\/localhost:3000\/de\/sources<\/loc>/);
+  assert.match(sitemap, /<loc>http:\/\/localhost:3000\/zh\/terms<\/loc>/);
+  assert.match(sitemap, /<loc>http:\/\/localhost:3000\/zh\/guides\/how-to-measure-a-display-cabinet<\/loc>/);
   assert.doesNotMatch(sitemap, /vercel\.app/);
 
   const robotsResponse = await render("/robots.txt");
@@ -63,6 +69,8 @@ test("server-renders the English large-set homepage", async () => {
   assert.equal((html.match(/class="furniture-preset"/g) ?? []).length, 11);
   assert.match(html, /<dt>433<\/dt><dd>built H\/W\/D records<\/dd>/);
   assert.match(html, /Titanic retail package/);
+  assert.match(html, /Measure the cabinet space that really counts/);
+  assert.match(html, /href="\/en\/guides\/how-to-measure-a-display-cabinet"/);
   assert.match(html, /alt="Sagrada Família LEGO Set 21065"/);
   assert.match(html, /🇺🇸 English/);
   assert.match(html, /🇩🇪 Deutsch/);
@@ -128,6 +136,9 @@ test("does not force multiple models into one fixed size", async () => {
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /No single fixed size/);
   assert.match(html, /separate models, modules or parts/);
+  assert.match(html, /Plan a multi-model product without inventing one size/);
+  assert.match(html, /Choose the modules or individual models you actually intend to display together/);
+  assert.match(html, /How to measure the cabinet correctly/);
   assert.doesNotMatch(html, /Will this set fit in your cabinet\?/);
   assert.doesNotMatch(html.replaceAll("中文", ""), /[\u4e00-\u9fff]/);
 });
@@ -186,16 +197,54 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.doesNotMatch(html, /2026-07-19/);
 });
 
-test("explains that saved cabinet dimensions stay in the browser", async () => {
+test("publishes an accurate privacy and advertising status notice", async () => {
   const response = await render("/en/privacy");
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
-  assert.match(html, /cabinet or shelf measurements and selected unit are stored only in this browser’s local storage/);
-  assert.match(html, /they are not sent to a server/);
-  assert.match(html, /Website analytics/);
-  assert.match(html, /Vercel Web Analytics automatically records anonymous page views/);
-  assert.match(html, /Vercel Speed Insights also records anonymous Web Vitals/);
-  assert.match(html, /does not use third-party cookies/);
-  assert.match(html, /separately asks for permission before product analytics starts/);
-  assert.match(html, /session replay, exception capture, heatmaps and performance capture are disabled/);
+  assert.match(html, /clear cabinet or shelf dimensions you enter and your selected measurement unit are saved in this browser’s local storage/);
+  assert.match(html, /does not send those measurements to its server/);
+  assert.match(html, /first-party language cookie/);
+  assert.match(html, /Vercel Web Analytics and Speed Insights/);
+  assert.match(html, /data points are anonymous/);
+  assert.match(html, /Product analytics events and analytics persistence are disabled by default/);
+  assert.match(html, /disables session recording, surveys, exception capture, heatmaps and performance capture/);
+  assert.match(html, /does not currently load Google AdSense code/);
+  assert.match(html, /Google-certified consent management platform/);
+  assert.match(html, /existing PostHog analytics choice is not a substitute for an advertising CMP/);
+});
+
+test("publishes localized trust and legal pages", async () => {
+  const expectations = [
+    ["/en/about", /Display planning built around one practical question/, /The site does not currently load Google AdSense code/],
+    ["/de/contact", /Ein Maßfehler oder ein Rechteproblem gefunden/, /Korrekturanfrage auf GitHub öffnen/],
+    ["/zh/sources", /数据和图片来自哪里/, /仅注明来源并不会自动取得许可/],
+    ["/en/terms", /Use bricksfit as a planning reference/, /No fit or accuracy warranty/],
+  ];
+
+  for (const [path, title, detail] of expectations) {
+    const response = await render(path);
+    assert.equal(response.status, 200);
+    const html = (await response.text()).replaceAll("<!-- -->", "");
+    assert.match(html, title);
+    assert.match(html, detail);
+    assert.match(html, /rel="canonical"/);
+  }
+});
+
+test("publishes the original cabinet measuring guide in every locale", async () => {
+  const expectations = [
+    ["/en/guides/how-to-measure-a-display-cabinet", /How to measure a cabinet for a built brick set/, /Record five things/],
+    ["/de/guides/how-to-measure-a-display-cabinet", /So misst du einen Schrank für ein gebautes Klemmbausteinset/, /Fünf Werte notieren/],
+    ["/zh/guides/how-to-measure-a-display-cabinet", /如何为积木拼装成品测量柜体空间/, /记录五项数据/],
+  ];
+
+  for (const [path, title, aside] of expectations) {
+    const response = await render(path);
+    assert.equal(response.status, 200);
+    const html = (await response.text()).replaceAll("<!-- -->", "");
+    assert.match(html, title);
+    assert.match(html, aside);
+    assert.match(html, /5 cm/);
+    assert.match(html, /hrefLang="x-default"/);
+  }
 });

@@ -6,10 +6,12 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { localePath, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
+import { getMeasurementGuide } from "@/data/measurement-guide";
 import { calculatorSetOptions, displaySets, libraryStats } from "@/data/sets";
 
 export function HomePageContent({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
+  const measurementGuide = getMeasurementGuide(locale);
   const featured: SetCardSet[] = displaySets.slice(0, 6).map((set) => ({
     set_id: set.set_id,
     set_number: set.set_number,
@@ -128,6 +130,12 @@ export function HomePageContent({ locale }: { locale: Locale }) {
             <h3>{t.home.shallowTitle}</h3>
             <p>{t.home.shallowCopy}</p>
             <Link href={localePath(locale, "/guides/large-brick-sets-under-30cm-deep")}>{t.home.seeShortlist} →</Link>
+          </article>
+          <article className="guide-teaser guide-blue guide-teaser-wide">
+            <p className="eyebrow">{measurementGuide.teaserEyebrow}</p>
+            <h3>{measurementGuide.teaserTitle}</h3>
+            <p>{measurementGuide.teaserCopy}</p>
+            <Link href={localePath(locale, "/guides/how-to-measure-a-display-cabinet")}>{measurementGuide.teaserLink} →</Link>
           </article>
         </section>
       </main>

@@ -42,6 +42,8 @@ test("keeps the interface compact while preserving horizontal furniture presets"
   assert.match(stylesheet, /\.hero-copy h1 \{[^}]*font-size: clamp\(3\.2rem, 5\.2vw, 5\.2rem\);/);
   assert.match(stylesheet, /\.set-grid \{[^}]*grid-template-columns: repeat\(4, 1fr\);/);
   assert.match(stylesheet, /@media \(max-width: 900px\) \{[\s\S]*?\.hero-copy \{[^}]*position: static;/);
+  assert.match(stylesheet, /\.nav-cta \{[^}]*white-space: nowrap;/);
+  assert.match(stylesheet, /@media \(max-width: 680px\) \{[\s\S]*?\.nav-cta \{ display: none; \}/);
 });
 
 test("server-renders the English large-set homepage", async () => {

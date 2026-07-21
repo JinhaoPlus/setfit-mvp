@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { type ChangeEvent, type FocusEvent, type KeyboardEvent, useMemo, useRef, useState } from "react";
 
 type SearchableSet = {
+  set_id: string;
   set_number: string;
   name: string;
+  imageAvailable: boolean;
 };
 
 type SearchableSetSelectProps = {
@@ -22,6 +25,10 @@ type SearchableSetSelectProps = {
 
 function optionLabel(set: SearchableSet) {
   return `#${set.set_number} · ${set.name}`;
+}
+
+function imagePath(set: SearchableSet) {
+  return set.imageAvailable ? `/set-images/${set.set_id}.jpg` : null;
 }
 
 export function SearchableSetSelect({
@@ -43,6 +50,8 @@ export function SearchableSetSelect({
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const listboxId = `${id}-listbox`;
+  const showSelectedThumbnail = inputValue === selectedLabel;
+  const selectedImage = imagePath(selected);
 
   const filteredSets = useMemo(() => {
     const query = (inputValue === selectedLabel ? "" : inputValue).trim().toLocaleLowerCase(locale);
@@ -105,7 +114,14 @@ export function SearchableSetSelect({
   return (
     <div className="field set-search-field">
       <label htmlFor={id}>{label}</label>
-      <div className="set-combobox" ref={rootRef} onBlur={handleBlur}>
+      <div className="set-combobox" data-has-thumbnail={showSelectedThumbnail} ref={rootRef} onBlur={handleBlur}>
+        {showSelectedThumbnail ? (
+          <span className="set-combobox-selected-image" aria-hidden="true">
+            {selectedImage
+              ? <Image src={selectedImage} alt="" fill unoptimized sizes="38px" />
+              : <span>#{selected.set_number}</span>}
+          </span>
+        ) : null}
         <input
           id={id}
           type="text"
@@ -156,7 +172,12 @@ export function SearchableSetSelect({
                 onMouseEnter={() => setActiveIndex(index)}
                 onClick={() => chooseSet(set)}
               >
-                <span>#{set.set_number}</span>
+                <span className="set-combobox-option-image" aria-hidden="true">
+                  {imagePath(set)
+                    ? <Image src={imagePath(set) ?? ""} alt="" width={48} height={36} unoptimized sizes="48px" />
+                    : <span>#{set.set_number}</span>}
+                </span>
+                <span className="set-combobox-option-number">#{set.set_number}</span>
                 <strong>{set.name}</strong>
               </button>
             )) : <p className="set-combobox-empty">{noResults}</p>}

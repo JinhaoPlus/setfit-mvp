@@ -54,6 +54,10 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /clear internal dimensions of your cabinet or shelf/);
   assert.match(html, /Proportional cabinet preview/);
   assert.match(html, /Search by set name or number/);
+  assert.match(html, /class="set-combobox-selected-image"/);
+  assert.match(html, /class="fit-cuboid fit-cuboid-set" data-status="[^"]+" data-orientation="standard"/);
+  assert.match(html, /class="cuboid-face cuboid-face-front" data-media="true"/);
+  assert.match(html, /src="\/set-images\/10294-1\.jpg"/);
   assert.match(html, /aria-label="3D preview zoom"/);
   assert.match(html, /aria-label="Zoom in"/);
   assert.match(html, /Three-dimensional proportional cabinet and set preview/);

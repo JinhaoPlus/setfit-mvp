@@ -46,6 +46,13 @@ test("keeps the interface compact while preserving horizontal furniture presets"
   assert.match(stylesheet, /@media \(max-width: 680px\) \{[\s\S]*?\.nav-cta \{ display: none; \}/);
 });
 
+test("uses a neutral model color and reserves red for no-fit states", async () => {
+  const stylesheet = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(stylesheet, /\.fit-cuboid-set \{[^}]*color: rgba\(69,88,105,\.88\);/);
+  assert.match(stylesheet, /\.set-swatch \{[^}]*border: 1px solid #52687a;[^}]*rgba\(118,139,158,\.28\);/);
+  assert.match(stylesheet, /\.fit-cuboid-set\[data-status="no"\] \.cuboid-face \{[^}]*#b52e18;[^}]*rgba\(220,57,31,\.24\);/);
+});
+
 test("server-renders the English large-set homepage", async () => {
   const response = await render("/en");
   assert.equal(response.status, 200);

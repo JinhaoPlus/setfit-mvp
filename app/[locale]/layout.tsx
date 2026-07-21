@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const origin = `${protocol}://${host}`;
   return {
     metadataBase: new URL(origin),
-    title: { default: t.meta.defaultTitle, template: "%s | SetFit" },
+    title: { default: t.meta.defaultTitle, template: "%s | bricksfit" },
     description: t.meta.defaultDescription,
     openGraph: {
       title: t.meta.socialTitle,

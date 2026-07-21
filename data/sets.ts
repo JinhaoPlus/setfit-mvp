@@ -103,6 +103,7 @@ export const calculatorSetOptions = planningSets.map((set) => ({
   heightCm: set.corrected_height_cm,
   widthCm: set.corrected_width_cm,
   depthCm: set.corrected_depth_cm,
+  imageAvailable: set.image_available,
   correction_method: set.correction_method,
   correction_confidence: set.correction_confidence,
 }));

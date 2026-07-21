@@ -11,7 +11,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div className="footer-top">
           <div>
             <Link className="brand" href={localePath(locale)}>
-              <span className="brand-mark" aria-hidden="true" /> SetFit
+              <span className="brand-mark" aria-hidden="true" /> bricksfit
             </Link>
             <p className="footer-copy">{t.footer.copy}</p>
           </div>

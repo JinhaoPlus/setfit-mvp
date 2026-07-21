@@ -13,8 +13,13 @@ test("server-renders the English large-set homepage", async () => {
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /Know the footprint before you build/);
+  assert.match(html, /bricksfit/);
+  assert.doesNotMatch(html, /Set(?:Fit)/);
   assert.match(html, /Will this set fit in your cabinet\?/);
   assert.match(html, /clear internal dimensions of your cabinet or shelf/);
+  assert.match(html, /Proportional cabinet preview/);
+  assert.match(html, /Three-dimensional proportional cabinet and set preview/);
+  assert.match(html, /Size comparison/);
   assert.match(html, /<dt>433<\/dt><dd>built H\/W\/D records<\/dd>/);
   assert.match(html, /Titanic retail package/);
   assert.match(html, /alt="Sagrada Família LEGO Set 21065"/);
@@ -45,7 +50,7 @@ test("renders a product page with plain built dimensions", async () => {
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /<h1 class="detail-title">Titanic<\/h1>/);
-  assert.match(html, /<title>Titanic 10294 \| SetFit<\/title>/);
+  assert.match(html, /<title>Titanic 10294 \| bricksfit<\/title>/);
   assert.match(html, /Built H × W × D/);
   assert.match(html, /17\.3(?:<!-- -->)? H × (?:<!-- -->)?6\.3(?:<!-- -->)? W × (?:<!-- -->)?53\.1(?:<!-- -->)? D in/);
   assert.match(html, /alt="Titanic LEGO Set 10294"/);
@@ -94,6 +99,8 @@ test("renders a separately indexable German version", async () => {
   assert.match(html, /<h1 class="detail-title">Titanic<\/h1>/);
   assert.doesNotMatch(html, /Brickset-Besitzer/);
   assert.match(html, /Passt dieses Set in deinen Schrank\?/);
+  assert.match(html, /bricksfit/);
+  assert.doesNotMatch(html, /Set(?:Fit)/);
   assert.match(html, /aria-label="Maßeinheit"/);
   assert.match(html, /aria-pressed="true">CM<\/button>/);
   assert.match(html, /44(?:<!-- -->)? H × (?:<!-- -->)?16(?:<!-- -->)? B × (?:<!-- -->)?135(?:<!-- -->)? T cm/);
@@ -111,11 +118,16 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /<h1 class="detail-title">Titanic<\/h1>/);
   assert.doesNotMatch(html, /位 Brickset 拥有者/);
   assert.match(html, /柜子是否能装得下/);
+  assert.match(html, /bricksfit/);
+  assert.doesNotMatch(html, /Set(?:Fit)/);
   assert.match(html, /aria-label="测量单位"/);
   assert.match(html, /aria-pressed="true">CM<\/button>/);
   assert.match(html, /44(?:<!-- -->)? 高 × (?:<!-- -->)?16(?:<!-- -->)? 宽 × (?:<!-- -->)?135(?:<!-- -->)? 深 cm/);
   assert.match(html, /请输入柜子或书架可用的内部净尺寸/);
   assert.match(html, /内部净宽/);
+  assert.match(html, /按比例展示柜内空间/);
+  assert.match(html, /柜子与套装的三维比例预览/);
+  assert.match(html, /尺寸对比/);
   assert.match(html, /hrefLang="en"/);
   assert.match(html, /hrefLang="de"/);
   assert.match(html, /hrefLang="zh"/);

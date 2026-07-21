@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { type CSSProperties, useState } from "react";
 import { InfoTip } from "@/components/InfoTip";
 import { useMeasurementContext } from "@/components/MeasurementProvider";
 import { saveMeasurementPreferences } from "@/components/measurement-preferences";
@@ -17,10 +18,25 @@ export type CalculatorSet = {
   heightCm: number;
   widthCm: number;
   depthCm: number;
+  imageAvailable: boolean;
   correction_method: CorrectionMethod;
   correction_confidence: CorrectionConfidence;
 };
 function shown(value: number) { return Number.isInteger(value) ? String(value) : value.toFixed(1); }
+
+type OrientedDimensions = {
+  widthCm: number;
+  depthCm: number;
+  heightCm: number;
+};
+
+function fitScore(set: OrientedDimensions, cabinet: OrientedDimensions) {
+  return (["widthCm", "depthCm", "heightCm"] as const).reduce((score, axis) => {
+    const available = Math.max(cabinet[axis], 0.1);
+    const overflow = Math.max(0, set[axis] - cabinet[axis]);
+    return score + (overflow > 0 ? 1 : 0) + overflow / available;
+  }, 0);
+}
 
 export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }: { sets: CalculatorSet[]; locale: Locale; initialSetNumber?: string }) {
   const dictionary = getDictionary(locale);
@@ -37,6 +53,42 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
   const rotated = shelf.widthCm >= depthCm && shelf.depthCm >= widthCm && shelf.heightCm >= heightCm;
   const roomyNormal = shelf.widthCm >= widthCm + siteConfig.displayClearanceCm && shelf.depthCm >= depthCm + siteConfig.displayClearanceCm && shelf.heightCm >= heightCm + siteConfig.displayClearanceCm;
   const roomyRotated = shelf.widthCm >= depthCm + siteConfig.displayClearanceCm && shelf.depthCm >= widthCm + siteConfig.displayClearanceCm && shelf.heightCm >= heightCm + siteConfig.displayClearanceCm;
+  const normalDimensions = { widthCm, depthCm, heightCm };
+  const rotatedDimensions = { widthCm: depthCm, depthCm: widthCm, heightCm };
+  const visualOrientation = normal
+    ? "standard"
+    : rotated
+      ? "rotated"
+      : fitScore(normalDimensions, shelf) <= fitScore(rotatedDimensions, shelf)
+        ? "standard"
+        : "rotated";
+  const visualSet = visualOrientation === "standard" ? normalDimensions : rotatedDimensions;
+  const comparisons = (["widthCm", "depthCm", "heightCm"] as const).map((axis) => ({
+    axis,
+    cabinetCm: shelf[axis],
+    setCm: visualSet[axis],
+    fits: shelf[axis] >= visualSet[axis],
+  }));
+  const maxVisualDimension = Math.max(
+    shelf.widthCm,
+    shelf.depthCm,
+    shelf.heightCm,
+    visualSet.widthCm,
+    visualSet.depthCm,
+    visualSet.heightCm,
+    1,
+  );
+  const visualEdge = (value: number) => `${Math.max(0.8, (Math.max(0, value) / maxVisualDimension) * 42)}cqw`;
+  const visualStyle = {
+    "--cabinet-width": visualEdge(shelf.widthCm),
+    "--cabinet-depth": visualEdge(shelf.depthCm),
+    "--cabinet-height": visualEdge(shelf.heightCm),
+    "--set-width": visualEdge(visualSet.widthCm),
+    "--set-depth": visualEdge(visualSet.depthCm),
+    "--set-height": visualEdge(visualSet.heightCm),
+  } as CSSProperties;
+  const visualStatus = comparisons.every((item) => item.fits) ? "fits" : "no";
+  const selectedImage = selected.imageAvailable ? `/set-images/${selected.set_id}.jpg` : null;
   const result = normal
     ? { status: "fits", icon: "✓", title: roomyNormal ? t.fitsRoomy : t.fitsTight, message: roomyNormal ? t.fitsRoomyMessage : t.fitsTightMessage, orientation: t.standard }
     : rotated
@@ -54,7 +106,63 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
       <div className="fit-form">
         <div className="field"><label htmlFor={`set-${safeInitialNumber}`}>{t.choose}</label><select id={`set-${safeInitialNumber}`} value={setNumber} onChange={(event) => setSetNumber(event.target.value)}>{sets.map((set) => <option key={set.set_number} value={set.set_number}>#{set.set_number} · {set.name}</option>)}</select></div>
         <div className="dimension-inputs">{(["widthCm", "depthCm", "heightCm"] as const).map((key) => { const label = key === "widthCm" ? t.internalWidth : key === "depthCm" ? t.internalDepth : t.internalHeight; return <div className="field" key={key}><label htmlFor={`${key}-${safeInitialNumber}`}>{label}</label><div className="input-wrap"><input id={`${key}-${safeInitialNumber}`} min="0" step="0.1" inputMode="decimal" type="number" value={shown(fromCm(shelf[key], unit))} onChange={(event) => updateShelf(key, event.target.value)} /><span className="input-unit">{unit}</span></div></div>; })}</div>
-        <div className="selected-set-line"><div><span>{selected.name} · {t.selectedSize}</span><InfoTip id={`calculator-size-${selected.set_id}`} text={dimensionInfoText(selected, locale)} label={`${t.info} ${selected.name}`} /></div><strong>{formatMeasurement(heightCm, unit, numberLocale)} × {formatMeasurement(widthCm, unit, numberLocale)} × {formatMeasurement(depthCm, unit, numberLocale)} {unit}</strong></div>
+        <section className="fit-visual" aria-labelledby={`fit-visual-title-${safeInitialNumber}`}>
+          <div className="fit-visual-heading">
+            <div>
+              <span className="fit-visual-kicker">{t.previewTitle}</span>
+              <h3 id={`fit-visual-title-${safeInitialNumber}`}>{selected.name}</h3>
+            </div>
+            <InfoTip id={`calculator-size-${selected.set_id}`} text={dimensionInfoText(selected, locale)} label={`${t.info} ${selected.name}`} />
+          </div>
+          <p className="fit-visual-hint">{t.previewHint}</p>
+          <div
+            className="fit-visual-stage"
+            style={visualStyle}
+            role="img"
+            aria-label={`${t.previewAria}${dictionary.common.labelSeparator}${selected.name}`}
+          >
+            <div className="fit-cuboid fit-cuboid-cabinet" aria-hidden="true">
+              <span className="cuboid-face cuboid-face-front" />
+              <span className="cuboid-face cuboid-face-back" />
+              <span className="cuboid-face cuboid-face-left" />
+              <span className="cuboid-face cuboid-face-right" />
+              <span className="cuboid-face cuboid-face-top" />
+              <span className="cuboid-face cuboid-face-bottom" />
+            </div>
+            <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} aria-hidden="true">
+              <span className="cuboid-face cuboid-face-front">
+                {selectedImage ? <Image src={selectedImage} alt="" fill unoptimized sizes="240px" /> : <strong className="fit-image-placeholder">#{selected.set_number}<small>{t.imageUnavailable}</small></strong>}
+              </span>
+              <span className="cuboid-face cuboid-face-back" />
+              <span className="cuboid-face cuboid-face-left" />
+              <span className="cuboid-face cuboid-face-right" />
+              <span className="cuboid-face cuboid-face-top" />
+              <span className="cuboid-face cuboid-face-bottom" />
+            </div>
+          </div>
+          <div className="fit-visual-legend" aria-hidden="true">
+            <span><i className="cabinet-swatch" />{t.cabinetLabel}</span>
+            <span><i className="set-swatch" />{t.setLabel}</span>
+          </div>
+        </section>
+        <section className="fit-dimension-check" aria-labelledby={`fit-dimensions-title-${safeInitialNumber}`}>
+          <div className="fit-dimension-heading">
+            <h3 id={`fit-dimensions-title-${safeInitialNumber}`}>{t.dimensionCheck}</h3>
+            <span>{visualOrientation === "standard" ? t.standard : t.rotated}</span>
+          </div>
+          <div className="fit-dimension-labels" aria-hidden="true"><span>{t.dimensionLabel}</span><span>{t.setLabel}</span><span>{t.cabinetLabel}</span><span>{t.statusLabel}</span></div>
+          {comparisons.map((comparison) => {
+            const axisLabel = comparison.axis === "widthCm" ? localeConfig.axes.width : comparison.axis === "depthCm" ? localeConfig.axes.depth : localeConfig.axes.height;
+            return (
+              <div className="fit-dimension-row" data-fit={comparison.fits} key={comparison.axis}>
+                <strong className="fit-axis-label">{axisLabel}</strong>
+                <span>{formatMeasurement(comparison.setCm, unit, numberLocale)} {unit}</span>
+                <span>{formatMeasurement(comparison.cabinetCm, unit, numberLocale)} {unit}</span>
+                <strong className="fit-axis-status"><i aria-hidden="true">{comparison.fits ? "✓" : "×"}</i>{comparison.fits ? t.axisFits : t.axisTooSmall}</strong>
+              </div>
+            );
+          })}
+        </section>
         <div className="fit-result" data-status={result.status} role="status" aria-live="polite"><div className="result-top"><span className="result-icon" aria-hidden="true">{result.icon}</span><div><h3>{result.title}</h3><p>{result.message}</p></div></div><div className="fit-deltas"><span>{result.orientation}</span><span>{t.strict}</span><span>{t.model}{dictionary.common.labelSeparator}{localeConfig.axes.height} {formatMeasurement(heightCm, unit, numberLocale)} · {localeConfig.axes.width} {formatMeasurement(widthCm, unit, numberLocale)} · {localeConfig.axes.depth} {formatMeasurement(depthCm, unit, numberLocale)} {unit}</span></div></div>
       </div>
     </div>

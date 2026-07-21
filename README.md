@@ -1,6 +1,6 @@
-# SetFit MVP
+# bricksfit MVP
 
-SetFit is an independent display-planning site based on a Brickset API snapshot
+bricksfit is an independent display-planning site based on a Brickset API snapshot
 of large released Normal-category sets ranked by piece count.
 
 Source files:

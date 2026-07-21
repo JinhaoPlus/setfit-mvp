@@ -11,7 +11,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       <div className="shell nav-shell">
         <Link className="brand" href={localePath(locale)} aria-label={t.nav.home}>
           <span className="brand-mark" aria-hidden="true" />
-          <span>SetFit</span>
+          <span>bricksfit</span>
         </Link>
         <nav className="main-nav" aria-label={t.nav.mainLabel}>
           <Link href={localePath(locale, "/sets")}>{t.nav.sets}</Link>

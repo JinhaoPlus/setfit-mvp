@@ -32,13 +32,15 @@ test("publishes one canonical multilingual sitemap", async () => {
   assert.match(await robotsResponse.text(), /Sitemap: http:\/\/localhost:3000\/sitemap\.xml/);
 });
 
-test("keeps furniture presets as fixed-width horizontal cards", async () => {
+test("keeps the interface compact while preserving horizontal furniture presets", async () => {
   const stylesheet = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(stylesheet, /\.furniture-preset-list \{[^}]*display: flex;[^}]*overflow-x: auto;/);
-  assert.match(stylesheet, /\.furniture-preset \{[^}]*width: 220px;[^}]*max-width: 78%;[^}]*flex: 0 0 220px;/);
+  assert.match(stylesheet, /\.furniture-preset \{[^}]*width: 190px;[^}]*max-width: 74%;[^}]*flex: 0 0 190px;/);
   assert.doesNotMatch(stylesheet, /grid-auto-columns/);
-  assert.match(stylesheet, /\.hero \{[^}]*grid-template-columns: minmax\(0, \.84fr\) minmax\(0, 1\.16fr\);[^}]*align-items: start;/);
-  assert.match(stylesheet, /\.hero-copy \{[^}]*position: sticky;[^}]*top: 116px;/);
+  assert.match(stylesheet, /\.hero \{[^}]*grid-template-columns: minmax\(0, \.9fr\) minmax\(0, 1\.1fr\);[^}]*align-items: start;/);
+  assert.match(stylesheet, /\.hero-copy \{[^}]*position: sticky;[^}]*top: 96px;/);
+  assert.match(stylesheet, /\.hero-copy h1 \{[^}]*font-size: clamp\(3\.2rem, 5\.2vw, 5\.2rem\);/);
+  assert.match(stylesheet, /\.set-grid \{[^}]*grid-template-columns: repeat\(4, 1fr\);/);
   assert.match(stylesheet, /@media \(max-width: 900px\) \{[\s\S]*?\.hero-copy \{[^}]*position: static;/);
 });
 

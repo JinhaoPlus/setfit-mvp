@@ -5,6 +5,7 @@ import { type CSSProperties, useState } from "react";
 import { InfoTip } from "@/components/InfoTip";
 import { useMeasurementContext } from "@/components/MeasurementProvider";
 import { saveMeasurementPreferences } from "@/components/measurement-preferences";
+import { SearchableSetSelect } from "@/components/SearchableSetSelect";
 import { localeSettings, siteConfig, type Locale } from "@/config/site";
 import { furniturePresets, type FurniturePreset } from "@/data/furniture-presets";
 import { getDictionary } from "@/data/i18n";
@@ -24,6 +25,11 @@ export type CalculatorSet = {
   correction_confidence: CorrectionConfidence;
 };
 function shown(value: number) { return Number.isInteger(value) ? String(value) : value.toFixed(1); }
+
+const visualZoomMin = 0.8;
+const visualZoomMax = 1.8;
+const visualZoomStep = 0.2;
+const defaultVisualZoom = 1.2;
 
 type OrientedDimensions = {
   widthCm: number;
@@ -49,6 +55,7 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
   const localeConfig = localeSettings[locale];
   const safeInitialNumber = sets.some((set) => set.set_number === initialSetNumber) ? initialSetNumber : sets[0].set_number;
   const [setNumber, setSetNumber] = useState(safeInitialNumber);
+  const [visualZoom, setVisualZoom] = useState(defaultVisualZoom);
   const { unit, widthCm: shelfWidthCm, depthCm: shelfDepthCm, heightCm: shelfHeightCm, numberLocale } = useMeasurementContext();
   const shelf = { widthCm: shelfWidthCm, depthCm: shelfDepthCm, heightCm: shelfHeightCm };
   const activeFurniturePreset = furniturePresets.find((preset) => sameDimensions(preset.planningClearCm, shelf));
@@ -92,6 +99,7 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
     "--set-width": visualEdge(visualSet.widthCm),
     "--set-depth": visualEdge(visualSet.depthCm),
     "--set-height": visualEdge(visualSet.heightCm),
+    "--visual-zoom": visualZoom,
   } as CSSProperties;
   const visualStatus = comparisons.every((item) => item.fits) ? "fits" : "no";
   const selectedImage = selected.imageAvailable ? `/set-images/${selected.set_id}.jpg` : null;
@@ -110,13 +118,28 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
     saveMeasurementPreferences({ ...preset.planningClearCm, unit });
   };
 
+  const changeVisualZoom = (change: number) => {
+    setVisualZoom((current) => Math.min(visualZoomMax, Math.max(visualZoomMin, Number((current + change).toFixed(1)))));
+  };
+
   const furnitureDimensions = (dimensions: OrientedDimensions) => `${localeConfig.axes.width} ${formatMeasurement(dimensions.widthCm, unit, numberLocale)} × ${localeConfig.axes.depth} ${formatMeasurement(dimensions.depthCm, unit, numberLocale)} × ${localeConfig.axes.height} ${formatMeasurement(dimensions.heightCm, unit, numberLocale)} ${unit}`;
 
   return (
     <div className="fit-card">
       <div className="fit-card-header"><div><h2>{t.title}</h2><p>{t.intro}</p></div></div>
       <div className="fit-form">
-        <div className="field"><label htmlFor={`set-${safeInitialNumber}`}>{t.choose}</label><select id={`set-${safeInitialNumber}`} value={setNumber} onChange={(event) => setSetNumber(event.target.value)}>{sets.map((set) => <option key={set.set_number} value={set.set_number}>#{set.set_number} · {set.name}</option>)}</select></div>
+        <SearchableSetSelect
+          id={`set-${safeInitialNumber}`}
+          label={t.choose}
+          sets={sets}
+          value={setNumber}
+          locale={locale}
+          placeholder={t.setSearchPlaceholder}
+          noResults={t.noSetResults}
+          openLabel={t.openSetList}
+          closeLabel={t.closeSetList}
+          onChange={setSetNumber}
+        />
         <section className="furniture-presets" aria-labelledby={`furniture-presets-title-${safeInitialNumber}`}>
           <div className="furniture-presets-heading">
             <div>
@@ -142,7 +165,7 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
                       <Image src={preset.imagePath} alt={`${preset.brand} ${preset.name} ${t.presetImage}`} fill unoptimized sizes="190px" />
                     </span>
                     <span className="furniture-preset-copy">
-                      <span className="furniture-preset-brand">{preset.brand} · {preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span>
+                      <span className="furniture-preset-brand">{preset.brand} · {preset.kind === "largeDisplayCase" ? t.presetLargeDisplayCase : preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span>
                       <strong>{preset.name}</strong>
                       <span className="furniture-preset-clear-label">{preset.publishedClearSpace ? t.presetClearPublished : t.presetClear}</span>
                       <span className="furniture-preset-dimensions">{furnitureDimensions(preset.planningClearCm)}</span>
@@ -169,29 +192,31 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
             <InfoTip id={`calculator-size-${selected.set_id}`} text={dimensionInfoText(selected, locale)} label={`${t.info} ${selected.name}`} />
           </div>
           <p className="fit-visual-hint">{t.previewHint}</p>
-          <div
-            className="fit-visual-stage"
-            style={visualStyle}
-            role="img"
-            aria-label={`${t.previewAria}${dictionary.common.labelSeparator}${selected.name}`}
-          >
-            <div className="fit-cuboid fit-cuboid-cabinet" aria-hidden="true">
-              <span className="cuboid-face cuboid-face-front" />
-              <span className="cuboid-face cuboid-face-back" />
-              <span className="cuboid-face cuboid-face-left" />
-              <span className="cuboid-face cuboid-face-right" />
-              <span className="cuboid-face cuboid-face-top" />
-              <span className="cuboid-face cuboid-face-bottom" />
+          <div className="fit-visual-stage" style={visualStyle}>
+            <div className="fit-zoom-controls" role="group" aria-label={t.zoomControls}>
+              <button type="button" aria-label={t.zoomOut} title={t.zoomOut} disabled={visualZoom <= visualZoomMin} onClick={() => changeVisualZoom(-visualZoomStep)}>−</button>
+              <button type="button" className="fit-zoom-reset" aria-label={t.resetZoom} title={t.resetZoom} onClick={() => setVisualZoom(defaultVisualZoom)}>{Math.round(visualZoom * 100)}%</button>
+              <button type="button" aria-label={t.zoomIn} title={t.zoomIn} disabled={visualZoom >= visualZoomMax} onClick={() => changeVisualZoom(visualZoomStep)}>+</button>
             </div>
-            <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} aria-hidden="true">
-              <span className="cuboid-face cuboid-face-front">
-                {selectedImage ? <Image src={selectedImage} alt="" fill unoptimized sizes="240px" /> : <strong className="fit-image-placeholder">#{selected.set_number}<small>{t.imageUnavailable}</small></strong>}
-              </span>
-              <span className="cuboid-face cuboid-face-back" />
-              <span className="cuboid-face cuboid-face-left" />
-              <span className="cuboid-face cuboid-face-right" />
-              <span className="cuboid-face cuboid-face-top" />
-              <span className="cuboid-face cuboid-face-bottom" />
+            <div className="fit-visual-canvas" role="img" aria-label={`${t.previewAria}${dictionary.common.labelSeparator}${selected.name}`}>
+              <div className="fit-cuboid fit-cuboid-cabinet" aria-hidden="true">
+                <span className="cuboid-face cuboid-face-front" />
+                <span className="cuboid-face cuboid-face-back" />
+                <span className="cuboid-face cuboid-face-left" />
+                <span className="cuboid-face cuboid-face-right" />
+                <span className="cuboid-face cuboid-face-top" />
+                <span className="cuboid-face cuboid-face-bottom" />
+              </div>
+              <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} aria-hidden="true">
+                <span className="cuboid-face cuboid-face-front">
+                  {selectedImage ? <Image src={selectedImage} alt="" fill unoptimized sizes="240px" /> : <strong className="fit-image-placeholder">#{selected.set_number}<small>{t.imageUnavailable}</small></strong>}
+                </span>
+                <span className="cuboid-face cuboid-face-back" />
+                <span className="cuboid-face cuboid-face-left" />
+                <span className="cuboid-face cuboid-face-right" />
+                <span className="cuboid-face cuboid-face-top" />
+                <span className="cuboid-face cuboid-face-bottom" />
+              </div>
             </div>
           </div>
           <div className="fit-visual-legend" aria-hidden="true">

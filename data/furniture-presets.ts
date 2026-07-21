@@ -1,9 +1,9 @@
 export type FurniturePreset = {
   id: string;
-  brand: "IKEA" | "MUJI";
+  brand: "IKEA" | "MUJI" | "Moduspace";
   name: string;
   articleNumber: string;
-  kind: "singleShelf" | "singleCube";
+  kind: "singleShelf" | "singleCube" | "largeDisplayCase";
   imagePath: string;
   sourceUrl: string;
   publishedOuterCm: {
@@ -27,6 +27,54 @@ export type FurniturePreset = {
  * tolerances make on-site measurement essential.
  */
 export const furniturePresets: FurniturePreset[] = [
+  {
+    id: "moduspace-sixth165",
+    brand: "Moduspace",
+    name: "SIXTH165",
+    articleNumber: "SIXTH165",
+    kind: "largeDisplayCase",
+    imagePath: "/furniture-presets/moduspace-sixth165.jpg",
+    sourceUrl: "https://us.moduspace.sg/SIXTH165",
+    publishedOuterCm: { widthCm: 165, depthCm: 45, heightCm: 49 },
+    planningClearCm: { widthCm: 161, depthCm: 41, heightCm: 45 },
+    publishedClearSpace: true,
+  },
+  {
+    id: "moduspace-df120",
+    brand: "Moduspace",
+    name: "DF120",
+    articleNumber: "DF120",
+    kind: "largeDisplayCase",
+    imagePath: "/furniture-presets/moduspace-df120.jpg",
+    sourceUrl: "https://au.moduspace.sg/DF120",
+    publishedOuterCm: { widthCm: 120, depthCm: 60, heightCm: 65 },
+    planningClearCm: { widthCm: 116, depthCm: 56, heightCm: 61 },
+    publishedClearSpace: true,
+  },
+  {
+    id: "moduspace-max140-plus",
+    brand: "Moduspace",
+    name: "MAX140 Plus",
+    articleNumber: "MAX140 Plus",
+    kind: "largeDisplayCase",
+    imagePath: "/furniture-presets/moduspace-max140-plus.jpg",
+    sourceUrl: "https://us.moduspace.sg/MAX140plus",
+    publishedOuterCm: { widthCm: 140, depthCm: 70, heightCm: 83 },
+    planningClearCm: { widthCm: 136, depthCm: 66, heightCm: 76 },
+    publishedClearSpace: true,
+  },
+  {
+    id: "moduspace-max150-plus",
+    brand: "Moduspace",
+    name: "MAX150 Plus",
+    articleNumber: "MAX150 Plus",
+    kind: "largeDisplayCase",
+    imagePath: "/furniture-presets/moduspace-max150-plus.jpg",
+    sourceUrl: "https://us.moduspace.sg/MAX150plus",
+    publishedOuterCm: { widthCm: 70, depthCm: 70, heightCm: 166 },
+    planningClearCm: { widthCm: 66, depthCm: 66, heightCm: 159 },
+    publishedClearSpace: true,
+  },
   {
     id: "ikea-billy-80",
     brand: "IKEA",

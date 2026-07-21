@@ -97,6 +97,9 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
   } as CSSProperties;
   const visualStatus = selectedFits ? "fits" : "no";
   const selectedImage = selected.imageAvailable ? `/set-images/${selected.set_id}.jpg` : null;
+  const visualSetMedia = selectedImage
+    ? <Image src={selectedImage} alt="" fill unoptimized sizes="240px" />
+    : <strong className="fit-image-placeholder">#{selected.set_number}<small>{t.imageUnavailable}</small></strong>;
   const result = selectedFits
     ? orientation === "standard"
       ? { status: "fits", icon: "✓", title: selectedRoomy ? t.fitsRoomy : t.fitsTight, message: selectedRoomy ? t.fitsRoomyMessage : t.fitsTightMessage, orientation: t.standard }
@@ -243,13 +246,15 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
                 <span className="cuboid-face cuboid-face-top" />
                 <span className="cuboid-face cuboid-face-bottom" />
               </div>
-              <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} aria-hidden="true">
-                <span className="cuboid-face cuboid-face-front">
-                  {selectedImage ? <Image src={selectedImage} alt="" fill unoptimized sizes="240px" /> : <strong className="fit-image-placeholder">#{selected.set_number}<small>{t.imageUnavailable}</small></strong>}
+              <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} data-orientation={orientation} aria-hidden="true">
+                <span className="cuboid-face cuboid-face-front" data-media={orientation === "standard"}>
+                  {orientation === "standard" ? visualSetMedia : null}
                 </span>
                 <span className="cuboid-face cuboid-face-back" />
                 <span className="cuboid-face cuboid-face-left" />
-                <span className="cuboid-face cuboid-face-right" />
+                <span className="cuboid-face cuboid-face-right" data-media={orientation === "rotated"}>
+                  {orientation === "rotated" ? visualSetMedia : null}
+                </span>
                 <span className="cuboid-face cuboid-face-top" />
                 <span className="cuboid-face cuboid-face-bottom" />
               </div>

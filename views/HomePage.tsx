@@ -7,12 +7,13 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { localePath, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
 import { getMeasurementGuide } from "@/data/measurement-guide";
-import { calculatorSetOptions, displaySets, libraryStats } from "@/data/sets";
+import { getLocalizedSetCatalog, libraryStats } from "@/data/sets";
 
 export function HomePageContent({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
   const measurementGuide = getMeasurementGuide(locale);
-  const featured: SetCardSet[] = displaySets.slice(0, 6).map((set) => ({
+  const localizedCatalog = getLocalizedSetCatalog(locale);
+  const featured: SetCardSet[] = localizedCatalog.displaySets.slice(0, 6).map((set) => ({
     set_id: set.set_id,
     set_number: set.set_number,
     name: set.name,
@@ -64,7 +65,7 @@ export function HomePageContent({ locale }: { locale: Locale }) {
           </div>
 
           <div id="fit-checker" className="hero-tool">
-            <ShelfFitCalculator sets={calculatorSetOptions} locale={locale} />
+            <ShelfFitCalculator sets={localizedCatalog.calculatorSetOptions} locale={locale} />
           </div>
         </section>
 

@@ -3,12 +3,12 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { localeSettings, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
-import { displaySets, libraryStats } from "@/data/sets";
+import { getLocalizedSetCatalog, libraryStats } from "@/data/sets";
 
 export function SetsPageContent({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
   const localeConfig = localeSettings[locale];
-  const librarySets = displaySets.map((set) => ({
+  const librarySets = getLocalizedSetCatalog(locale).displaySets.map((set) => ({
     set_id: set.set_id,
     set_number: set.set_number,
     name: set.name,

@@ -60,6 +60,9 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /Know the footprint before you build/);
   assert.match(html, /bricksfit/);
   assert.doesNotMatch(html, /Set(?:Fit)/);
+  assert.match(html, /class="language-switcher-trigger"[^>]*aria-haspopup="listbox"/);
+  assert.match(html, /class="language-switcher-option"[^>]*role="option"/);
+  assert.doesNotMatch(html, /<select[^>]*aria-label="Language"/);
   assert.match(html, /Will this set fit in your cabinet\?/);
   assert.match(html, /<link rel="icon" href="[^"]*\/favicon\.svg" type="image\/svg\+xml"/);
   assert.match(html, /clear internal dimensions of your cabinet or shelf/);
@@ -95,9 +98,9 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /Measure the cabinet space that really counts/);
   assert.match(html, /href="\/en\/guides\/how-to-measure-a-display-cabinet"/);
   assert.match(html, /alt="Sagrada Família LEGO Set 21065"/);
-  assert.match(html, /🇺🇸 English/);
-  assert.match(html, /🇩🇪 Deutsch/);
-  assert.match(html, /🇨🇳 中文/);
+  assert.match(html, /language-switcher-label" lang="en">English/);
+  assert.match(html, /<span aria-hidden="true">🇩🇪<\/span><span lang="de">Deutsch/);
+  assert.match(html, /<span aria-hidden="true">🇨🇳<\/span><span lang="zh">中文/);
   assert.equal((html.match(/class="header-unit-toggle"/g) ?? []).length, 1);
   assert.match(html, /aria-label="Measurement unit"/);
   assert.match(html, /aria-pressed="true">IN<\/button>/);
@@ -220,7 +223,7 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /hrefLang="de"/);
   assert.match(html, /hrefLang="zh"/);
   assert.match(html, /rel="canonical" href="http:\/\/localhost(?::3000)?\/zh\/sets\/10294-titanic-dimensions"/);
-  assert.match(html, /🇨🇳 中文/);
+  assert.match(html, /language-switcher-label" lang="zh">中文/);
   assert.doesNotMatch(html, /Will this set fit in your cabinet\?|Passt dieses Set in deinen Schrank\?/);
   assert.doesNotMatch(html, /2026-07-19/);
 });

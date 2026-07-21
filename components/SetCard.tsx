@@ -1,9 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { InfoTip } from "@/components/InfoTip";
+import { useMeasurementContext } from "@/components/MeasurementProvider";
 import { localePath, localeSettings, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
-import { dimensionInfoText, formatCm, hasDimensionValues, setImagePath } from "@/data/set-presentation";
+import { formatMeasurement } from "@/data/measurements";
+import { dimensionInfoText, hasDimensionValues, setImagePath } from "@/data/set-presentation";
 import type { DisplaySet } from "@/data/sets";
 
 export type SetCardSet = Pick<DisplaySet,
@@ -15,6 +19,7 @@ export type SetCardSet = Pick<DisplaySet,
 export function SetCard({ set, locale }: { set: SetCardSet; locale: Locale }) {
   const t = getDictionary(locale);
   const localeConfig = localeSettings[locale];
+  const { unit, numberLocale } = useMeasurementContext();
   const image = setImagePath(set);
   const hasDimensions = hasDimensionValues(set);
   return (
@@ -27,8 +32,8 @@ export function SetCard({ set, locale }: { set: SetCardSet; locale: Locale }) {
           <div className="set-card-top"><span>#{set.set_number} · {set.theme}</span><span>{set.pieces.toLocaleString(localeConfig.numberLocale)} {t.common.pieces}</span></div>
           <span className="card-rank">{t.card.rank} #{set.rank_by_pieces}</span>
           <h3>{set.name}</h3>
-          <div className="set-card-bottom" aria-label={hasDimensions ? `${t.card.builtAria}${t.common.labelSeparator}${set.corrected_height_cm} × ${set.corrected_width_cm} × ${set.corrected_depth_cm} cm` : t.card.noFixed}>
-            {hasDimensions ? <><span>{localeConfig.axes.height} {formatCm(set.corrected_height_cm)} cm</span><span>{localeConfig.axes.width} {formatCm(set.corrected_width_cm)} cm</span><span>{localeConfig.axes.depth} {formatCm(set.corrected_depth_cm)} cm</span></> : <span>{t.card.noFixed}</span>}
+          <div className="set-card-bottom" aria-label={hasDimensions ? `${t.card.builtAria}${t.common.labelSeparator}${formatMeasurement(set.corrected_height_cm, unit, numberLocale)} × ${formatMeasurement(set.corrected_width_cm, unit, numberLocale)} × ${formatMeasurement(set.corrected_depth_cm, unit, numberLocale)} ${unit}` : t.card.noFixed}>
+            {hasDimensions ? <><span>{localeConfig.axes.height} {formatMeasurement(set.corrected_height_cm, unit, numberLocale)} {unit}</span><span>{localeConfig.axes.width} {formatMeasurement(set.corrected_width_cm, unit, numberLocale)} {unit}</span><span>{localeConfig.axes.depth} {formatMeasurement(set.corrected_depth_cm, unit, numberLocale)} {unit}</span></> : <span>{t.card.noFixed}</span>}
           </div>
         </div>
       </Link>

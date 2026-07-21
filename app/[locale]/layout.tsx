@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { AnalyticsConsent } from "@/components/AnalyticsConsent";
+import { MeasurementProvider } from "@/components/MeasurementProvider";
 import { isLocale, localeSettings, siteConfig } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
 import "../globals.css";
@@ -45,7 +46,7 @@ export default async function LocaleRootLayout({ children, params }: Readonly<{ 
   return (
     <html lang={locale}>
       <body>
-        {children}
+        <MeasurementProvider locale={locale}>{children}</MeasurementProvider>
         <AnalyticsConsent copy={t.analyticsConsent} privacyHref={`/${locale}/privacy`} />
       </body>
     </html>

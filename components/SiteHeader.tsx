@@ -17,7 +17,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <Link href={localePath(locale, "/sets")}>{t.nav.sets}</Link>
           <Link href={localePath(locale, "/methodology")}>{t.nav.methodology}</Link>
           <Link className="nav-cta" href={`${localePath(locale)}#fit-checker`}>{t.nav.calculator}</Link>
-          <MeasurementUnitSwitcher locale={locale} label={t.calculator.unit} />
+          <MeasurementUnitSwitcher label={t.calculator.unit} />
           <LanguageSwitcher locale={locale} label={t.nav.language} />
         </nav>
       </div>

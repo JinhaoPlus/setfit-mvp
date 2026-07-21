@@ -69,7 +69,7 @@ export const dictionaries = {
     },
     detail: {
       metaNoFixed: "no single fixed built size", metaCopy: "See built size, package size and display-space guidance.",
-      builtLabel: "Built H × W × D · centimeters", builtDimensions: "Built model dimensions", noFixed: "No single fixed size", noFixedDescription: "This product contains separate models, modules or parts that should be planned individually.",
+      builtLabel: "Built H × W × D", builtDimensions: "Built model dimensions", noFixed: "No single fixed size", noFixedDescription: "This product contains separate models, modules or parts that should be planned individually.",
       imageUnavailable: "Set image unavailable", imageCourtesy: "Set image courtesy of ", noImage: "No catalog image was available in the Brickset image library.", info: "About the dimensions for",
       planningTitle: "Size and display planning", modelListed: "The built model is listed as", startingSpace: "Starting display space", volume: "Rectangular envelope volume", movable: "Movable parts, doors, sails and antennas may need more space.", noFixedBody: "This product does not have one practical fixed H/W/D record. Plan its individual models, bags or modules separately.", sizeSource: "View size source",
       packageTitle: "Package data", packageMeasures: "The separate retail package measures", packageVolume: "Package envelope volume", packageWeight: "Recorded package weight", noPackage: "No complete package dimensions are available for this set.", bricksetRecord: "View Brickset record", packageSeparate: "Package size is never substituted for built size.",
@@ -156,7 +156,7 @@ export const dictionaries = {
     },
     detail: {
       metaNoFixed: "keine einheitliche feste Modellgröße", metaCopy: "Sieh dir Modellmaße, Verpackungsmaße und Hinweise zur Stellflächenplanung an.",
-      builtLabel: "Gebautes Modell H × B × T · Zentimeter", builtDimensions: "Maße des gebauten Modells", noFixed: "Keine einheitliche feste Größe", noFixedDescription: "Dieses Produkt enthält getrennte Modelle, Module oder Teile, deren Platzbedarf einzeln geplant werden sollte.",
+      builtLabel: "Gebautes Modell H × B × T", builtDimensions: "Maße des gebauten Modells", noFixed: "Keine einheitliche feste Größe", noFixedDescription: "Dieses Produkt enthält getrennte Modelle, Module oder Teile, deren Platzbedarf einzeln geplant werden sollte.",
       imageUnavailable: "Keine Set-Abbildung verfügbar", imageCourtesy: "Set-Abbildung mit freundlicher Genehmigung von ", noImage: "In der Brickset-Bildbibliothek war keine Katalogabbildung verfügbar.", info: "Erläuterungen zu den Maßen von",
       planningTitle: "Maße und Stellflächenplanung", modelListed: "Für das gebaute Modell sind folgende Maße erfasst:", startingSpace: "Empfohlener Ausgangswert für die Stellfläche", volume: "Volumen des umschließenden Quaders", movable: "Bewegliche Teile, Türen, Segel und Antennen können zusätzlichen Platz benötigen.", noFixedBody: "Für dieses Produkt gibt es keinen sinnvollen einheitlichen H/B/T-Datensatz. Plane die einzelnen Modelle, Beutel oder Module getrennt.", sizeSource: "Quelle der Modellmaße ansehen",
       packageTitle: "Verpackungsdaten", packageMeasures: "Die separat erfasste Verkaufsverpackung misst", packageVolume: "Volumen des Verpackungsquaders", packageWeight: "Erfasstes Verpackungsgewicht", noPackage: "Für dieses Set sind keine vollständigen Verpackungsmaße verfügbar.", bricksetRecord: "Brickset-Eintrag ansehen", packageSeparate: "Verpackungsmaße werden niemals als Modellmaße verwendet.",
@@ -243,7 +243,7 @@ export const dictionaries = {
     },
     detail: {
       metaNoFixed: "没有单一固定的拼装成品尺寸", metaCopy: "查看拼装成品尺寸、包装尺寸和展示空间建议。",
-      builtLabel: "拼装成品高 × 宽 × 深 · 厘米", builtDimensions: "拼装成品尺寸", noFixed: "没有单一固定尺寸", noFixedDescription: "这个产品包含多个独立模型、模块或部件，需要分别规划展示空间。",
+      builtLabel: "拼装成品高 × 宽 × 深", builtDimensions: "拼装成品尺寸", noFixed: "没有单一固定尺寸", noFixedDescription: "这个产品包含多个独立模型、模块或部件，需要分别规划展示空间。",
       imageUnavailable: "暂无套装图片", imageCourtesy: "套装图片来源：", noImage: "Brickset 图片库中没有可用的产品目录图片。", info: "关于以下套装的尺寸说明：",
       planningTitle: "尺寸与展示空间规划", modelListed: "该拼装模型记录的尺寸为", startingSpace: "建议起始展示空间", volume: "矩形外包络体积", movable: "活动部件、门、帆和天线可能需要更多空间。", noFixedBody: "这个产品没有一个适合规划的固定高/宽/深记录，请分别规划其中各个模型、袋装部件或模块的空间。", sizeSource: "查看模型尺寸来源",
       packageTitle: "包装数据", packageMeasures: "另行记录的零售包装尺寸为", packageVolume: "包装外包络体积", packageWeight: "记录的包装重量", noPackage: "这个套装暂无完整的包装尺寸。", bricksetRecord: "查看 Brickset 套装记录", packageSeparate: "包装尺寸绝不会被用来替代拼装成品尺寸。",

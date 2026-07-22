@@ -137,80 +137,21 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
     <div className="fit-card">
       <div className="fit-card-header"><div><h2>{t.title}</h2><p>{t.intro}</p></div></div>
       <div className="fit-form">
-        <SearchableSetSelect
-          id={`set-${safeInitialNumber}`}
-          label={t.choose}
-          sets={sets}
-          value={setNumber}
-          locale={locale}
-          placeholder={t.setSearchPlaceholder}
-          noResults={t.noSetResults}
-          openLabel={t.openSetList}
-          closeLabel={t.closeSetList}
-          onChange={setSetNumber}
-        />
-        <section className="furniture-presets" aria-labelledby={`furniture-presets-title-${safeInitialNumber}`}>
-          <div className="furniture-presets-heading">
-            <div>
-              <span className="fit-visual-kicker">{t.presetKicker}</span>
-              <h3 id={`furniture-presets-title-${safeInitialNumber}`}>{t.presetTitle}</h3>
-            </div>
-            <span className="furniture-preset-count">{furniturePresets.length + 1} {t.presetCount}</span>
-          </div>
-          <p className="furniture-presets-intro">{t.presetIntro}</p>
-          <div className="furniture-preset-list">
-            <article className="furniture-preset furniture-preset-custom" data-active={isCustomActive}>
-              <button
-                type="button"
-                className="furniture-preset-button"
-                aria-label={t.customPresetName}
-                aria-pressed={isCustomActive}
-                onClick={selectCustomDimensions}
-              >
-                <span className="furniture-preset-image furniture-preset-custom-visual" aria-hidden="true">
-                  <span>{localeConfig.axes.width} × {localeConfig.axes.depth} × {localeConfig.axes.height}</span>
-                </span>
-                <span className="furniture-preset-copy">
-                  <span className="furniture-preset-brand">{t.customPresetBrand}</span>
-                  <strong>{t.customPresetName}</strong>
-                  <span className="furniture-preset-clear-label">{t.customPresetCopy}</span>
-                  <span className="furniture-preset-action">{isCustomActive ? t.customPresetActive : t.customPresetApply}</span>
-                </span>
-              </button>
-            </article>
-            {furniturePresets.map((preset) => {
-              const isActive = !customSelected && activeFurniturePreset?.id === preset.id;
-              return (
-                <article className="furniture-preset" data-active={isActive} key={preset.id}>
-                  <button
-                    type="button"
-                    className="furniture-preset-button"
-                    aria-label={`${t.presetApply}${dictionary.common.labelSeparator}${preset.brand} ${preset.name}`}
-                    aria-pressed={isActive}
-                    onClick={() => applyFurniturePreset(preset)}
-                  >
-                    <span className="furniture-preset-image">
-                      <Image src={preset.imagePath} alt={`${preset.brand} ${preset.name} ${t.presetImage}`} fill unoptimized sizes="190px" />
-                    </span>
-                    <span className="furniture-preset-copy">
-                      <span className="furniture-preset-brand">{preset.brand} · {preset.kind === "largeDisplayCase" ? t.presetLargeDisplayCase : preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span>
-                      <strong>{preset.name}</strong>
-                      <span className="furniture-preset-clear-label">{preset.publishedClearSpace ? t.presetClearPublished : t.presetClear}</span>
-                      <span className="furniture-preset-dimensions">{furnitureDimensions(preset.planningClearCm)}</span>
-                      <span className="furniture-preset-action">{isActive ? t.presetApplied : t.presetApply}</span>
-                    </span>
-                  </button>
-                  <div className="furniture-preset-source">
-                    <span>{t.presetOuter}{dictionary.common.labelSeparator}{furnitureDimensions(preset.publishedOuterCm)}</span>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <p className="furniture-presets-note">{t.presetNote}</p>
-        </section>
-        {isCustomActive ? <p className="custom-dimensions-hint" id={`custom-dimensions-hint-${safeInitialNumber}`}>{t.customDimensionsHint}</p> : null}
-        <div className="dimension-inputs">{(["widthCm", "depthCm", "heightCm"] as const).map((key) => { const label = key === "widthCm" ? t.internalWidth : key === "depthCm" ? t.internalDepth : t.internalHeight; return <div className="field" key={key}><label htmlFor={`${key}-${safeInitialNumber}`}>{label}</label><div className="input-wrap"><input ref={key === "widthCm" ? widthInputRef : undefined} id={`${key}-${safeInitialNumber}`} min="0" step="0.1" inputMode="decimal" type="number" value={shown(fromCm(shelf[key], unit))} aria-describedby={isCustomActive ? `custom-dimensions-hint-${safeInitialNumber}` : undefined} onChange={(event) => updateShelf(key, event.target.value)} /><span className="input-unit">{unit}</span></div></div>; })}</div>
+        <div className="fit-core-grid">
+          <SearchableSetSelect
+            id={`set-${safeInitialNumber}`}
+            label={t.choose}
+            sets={sets}
+            value={setNumber}
+            locale={locale}
+            placeholder={t.setSearchPlaceholder}
+            noResults={t.noSetResults}
+            openLabel={t.openSetList}
+            closeLabel={t.closeSetList}
+            onChange={setSetNumber}
+          />
+          <div className="dimension-inputs">{(["widthCm", "depthCm", "heightCm"] as const).map((key) => { const label = key === "widthCm" ? t.internalWidth : key === "depthCm" ? t.internalDepth : t.internalHeight; return <div className="field" key={key}><label htmlFor={`${key}-${safeInitialNumber}`}>{label}</label><div className="input-wrap"><input ref={key === "widthCm" ? widthInputRef : undefined} id={`${key}-${safeInitialNumber}`} min="0" step="0.1" inputMode="decimal" type="number" value={shown(fromCm(shelf[key], unit))} aria-describedby={isCustomActive ? `custom-dimensions-hint-${safeInitialNumber}` : undefined} onChange={(event) => updateShelf(key, event.target.value)} /><span className="input-unit">{unit}</span></div></div>; })}</div>
+        </div>
         <section className="orientation-picker" aria-labelledby={`orientation-title-${safeInitialNumber}`}>
           <div>
             <span className="fit-visual-kicker">{t.orientationKicker}</span>
@@ -222,68 +163,81 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
             <button type="button" aria-pressed={orientation === "rotated"} onClick={() => setOrientation("rotated")}>{t.rotated}</button>
           </div>
         </section>
-        <section className="fit-visual" aria-labelledby={`fit-visual-title-${safeInitialNumber}`}>
-          <div className="fit-visual-heading">
-            <div>
-              <span className="fit-visual-kicker">{t.previewTitle}</span>
-              <h3 id={`fit-visual-title-${safeInitialNumber}`}>{selected.name}</h3>
-            </div>
-            <InfoTip id={`calculator-size-${selected.set_id}`} text={dimensionInfoText(selected, locale)} label={`${t.info} ${selected.name}`} />
+        <div className="fit-result" data-status={result.status} role="status" aria-live="polite">
+          <div className="result-top"><span className="result-icon" aria-hidden="true">{result.icon}</span><div><h3>{result.title}</h3><p>{result.message}</p></div></div>
+          <div className="fit-axis-summary" aria-label={t.dimensionCheck}>
+            {comparisons.map((comparison) => {
+              const axisLabel = comparison.axis === "widthCm" ? localeConfig.axes.width : comparison.axis === "depthCm" ? localeConfig.axes.depth : localeConfig.axes.height;
+              return (
+                <div className="fit-axis-compact" data-fit={comparison.fits} key={comparison.axis} role="group" aria-label={`${axisLabel}${dictionary.common.labelSeparator}${t.setLabel} ${formatMeasurement(comparison.setCm, unit, numberLocale)} ${unit}${dictionary.common.recordSeparator}${t.cabinetLabel} ${formatMeasurement(comparison.cabinetCm, unit, numberLocale)} ${unit}${dictionary.common.recordSeparator}${comparison.fits ? t.axisFits : t.axisTooSmall}`}>
+                  <strong>{axisLabel}</strong>
+                  <span><small>{t.setLabel}</small> {formatMeasurement(comparison.setCm, unit, numberLocale)}</span>
+                  <i aria-hidden="true">→</i>
+                  <span><small>{t.cabinetLabel}</small> {formatMeasurement(comparison.cabinetCm, unit, numberLocale)}</span>
+                  <em aria-hidden="true">{comparison.fits ? "✓" : "×"}</em>
+                </div>
+              );
+            })}
           </div>
-          <p className="fit-visual-hint">{t.previewHint}</p>
-          <div className="fit-visual-stage" style={visualStyle}>
-            <div className="fit-zoom-controls" role="group" aria-label={t.zoomControls}>
-              <button type="button" aria-label={t.zoomOut} title={t.zoomOut} disabled={visualZoom <= visualZoomMin} onClick={() => changeVisualZoom(-visualZoomStep)}>−</button>
-              <button type="button" className="fit-zoom-reset" aria-label={t.resetZoom} title={t.resetZoom} onClick={() => setVisualZoom(defaultVisualZoom)}>{Math.round(visualZoom * 100)}%</button>
-              <button type="button" aria-label={t.zoomIn} title={t.zoomIn} disabled={visualZoom >= visualZoomMax} onClick={() => changeVisualZoom(visualZoomStep)}>+</button>
-            </div>
-            <div className="fit-visual-canvas" role="img" aria-label={`${t.previewAria}${dictionary.common.labelSeparator}${selected.name}`}>
-              <div className="fit-cuboid fit-cuboid-cabinet" aria-hidden="true">
-                <span className="cuboid-face cuboid-face-front" />
-                <span className="cuboid-face cuboid-face-back" />
-                <span className="cuboid-face cuboid-face-left" />
-                <span className="cuboid-face cuboid-face-right" />
-                <span className="cuboid-face cuboid-face-top" />
-                <span className="cuboid-face cuboid-face-bottom" />
+          <div className="fit-result-meta"><span>{result.orientation}</span><span>{t.strict}</span></div>
+        </div>
+
+        <div className="fit-secondary-tools">
+          <details className="fit-secondary-panel">
+            <summary><span>{t.presetTitle}</span><small>{furniturePresets.length + 1} {t.presetCount}</small></summary>
+            <section className="furniture-presets" aria-labelledby={`furniture-presets-title-${safeInitialNumber}`}>
+              <div className="furniture-presets-heading">
+                <div>
+                  <span className="fit-visual-kicker">{t.presetKicker}</span>
+                  <h3 id={`furniture-presets-title-${safeInitialNumber}`}>{t.presetTitle}</h3>
+                </div>
               </div>
-              <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} data-orientation={orientation} aria-hidden="true">
-                <span className="cuboid-face cuboid-face-front" data-media={orientation === "standard"}>
-                  {orientation === "standard" ? visualSetMedia : null}
-                </span>
-                <span className="cuboid-face cuboid-face-back" />
-                <span className="cuboid-face cuboid-face-left" />
-                <span className="cuboid-face cuboid-face-right" data-media={orientation === "rotated"}>
-                  {orientation === "rotated" ? visualSetMedia : null}
-                </span>
-                <span className="cuboid-face cuboid-face-top" />
-                <span className="cuboid-face cuboid-face-bottom" />
+              <p className="furniture-presets-intro">{t.presetIntro}</p>
+              <div className="furniture-preset-list">
+                <article className="furniture-preset furniture-preset-custom" data-active={isCustomActive}>
+                  <button type="button" className="furniture-preset-button" aria-label={t.customPresetName} aria-pressed={isCustomActive} onClick={selectCustomDimensions}>
+                    <span className="furniture-preset-image furniture-preset-custom-visual" aria-hidden="true"><span>{localeConfig.axes.width} × {localeConfig.axes.depth} × {localeConfig.axes.height}</span></span>
+                    <span className="furniture-preset-copy"><span className="furniture-preset-brand">{t.customPresetBrand}</span><strong>{t.customPresetName}</strong><span className="furniture-preset-clear-label">{t.customPresetCopy}</span><span className="furniture-preset-action">{isCustomActive ? t.customPresetActive : t.customPresetApply}</span></span>
+                  </button>
+                </article>
+                {furniturePresets.map((preset) => {
+                  const isActive = !customSelected && activeFurniturePreset?.id === preset.id;
+                  return (
+                    <article className="furniture-preset" data-active={isActive} key={preset.id}>
+                      <button type="button" className="furniture-preset-button" aria-label={`${t.presetApply}${dictionary.common.labelSeparator}${preset.brand} ${preset.name}`} aria-pressed={isActive} onClick={() => applyFurniturePreset(preset)}>
+                        <span className="furniture-preset-image"><Image src={preset.imagePath} alt={`${preset.brand} ${preset.name} ${t.presetImage}`} fill unoptimized sizes="150px" /></span>
+                        <span className="furniture-preset-copy"><span className="furniture-preset-brand">{preset.brand} · {preset.kind === "largeDisplayCase" ? t.presetLargeDisplayCase : preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span><strong>{preset.name}</strong><span className="furniture-preset-clear-label">{preset.publishedClearSpace ? t.presetClearPublished : t.presetClear}</span><span className="furniture-preset-dimensions">{furnitureDimensions(preset.planningClearCm)}</span><span className="furniture-preset-action">{isActive ? t.presetApplied : t.presetApply}</span></span>
+                      </button>
+                      <div className="furniture-preset-source"><span>{t.presetOuter}{dictionary.common.labelSeparator}{furnitureDimensions(preset.publishedOuterCm)}</span></div>
+                    </article>
+                  );
+                })}
               </div>
-            </div>
-          </div>
-          <div className="fit-visual-legend" aria-hidden="true">
-            <span><i className="cabinet-swatch" />{t.cabinetLabel}</span>
-            <span><i className="set-swatch" />{t.setLabel}</span>
-          </div>
-        </section>
-        <section className="fit-dimension-check" aria-labelledby={`fit-dimensions-title-${safeInitialNumber}`}>
-          <div className="fit-dimension-heading">
-            <h3 id={`fit-dimensions-title-${safeInitialNumber}`}>{t.dimensionCheck}</h3>
-            <span>{orientation === "standard" ? t.standard : t.rotated}</span>
-          </div>
-          <div className="fit-dimension-labels" aria-hidden="true"><span>{t.dimensionLabel}</span><span>{t.setLabel}</span><span>{t.cabinetLabel}</span><span>{t.statusLabel}</span></div>
-          {comparisons.map((comparison) => {
-            const axisLabel = comparison.axis === "widthCm" ? localeConfig.axes.width : comparison.axis === "depthCm" ? localeConfig.axes.depth : localeConfig.axes.height;
-            return (
-              <div className="fit-dimension-row" data-fit={comparison.fits} key={comparison.axis}>
-                <strong className="fit-axis-label">{axisLabel}</strong>
-                <span>{formatMeasurement(comparison.setCm, unit, numberLocale)} {unit}</span>
-                <span>{formatMeasurement(comparison.cabinetCm, unit, numberLocale)} {unit}</span>
-                <strong className="fit-axis-status"><i aria-hidden="true">{comparison.fits ? "✓" : "×"}</i>{comparison.fits ? t.axisFits : t.axisTooSmall}</strong>
+              <p className="furniture-presets-note">{t.presetNote}</p>
+            </section>
+          </details>
+
+          <details className="fit-secondary-panel">
+            <summary><span>{t.previewTitle}</span><small>{selected.name}</small></summary>
+            <section className="fit-visual" aria-labelledby={`fit-visual-title-${safeInitialNumber}`}>
+              <div className="fit-visual-heading"><div><span className="fit-visual-kicker">{t.previewTitle}</span><h3 id={`fit-visual-title-${safeInitialNumber}`}>{selected.name}</h3></div><InfoTip id={`calculator-size-${selected.set_id}`} text={dimensionInfoText(selected, locale)} label={`${t.info} ${selected.name}`} /></div>
+              <p className="fit-visual-hint">{t.previewHint}</p>
+              <div className="fit-visual-stage" style={visualStyle}>
+                <div className="fit-zoom-controls" role="group" aria-label={t.zoomControls}>
+                  <button type="button" aria-label={t.zoomOut} title={t.zoomOut} disabled={visualZoom <= visualZoomMin} onClick={() => changeVisualZoom(-visualZoomStep)}>−</button>
+                  <button type="button" className="fit-zoom-reset" aria-label={t.resetZoom} title={t.resetZoom} onClick={() => setVisualZoom(defaultVisualZoom)}>{Math.round(visualZoom * 100)}%</button>
+                  <button type="button" aria-label={t.zoomIn} title={t.zoomIn} disabled={visualZoom >= visualZoomMax} onClick={() => changeVisualZoom(visualZoomStep)}>+</button>
+                </div>
+                <div className="fit-visual-canvas" role="img" aria-label={`${t.previewAria}${dictionary.common.labelSeparator}${selected.name}`}>
+                  <div className="fit-cuboid fit-cuboid-cabinet" aria-hidden="true"><span className="cuboid-face cuboid-face-front" /><span className="cuboid-face cuboid-face-back" /><span className="cuboid-face cuboid-face-left" /><span className="cuboid-face cuboid-face-right" /><span className="cuboid-face cuboid-face-top" /><span className="cuboid-face cuboid-face-bottom" /></div>
+                  <div className="fit-cuboid fit-cuboid-set" data-status={visualStatus} data-orientation={orientation} aria-hidden="true"><span className="cuboid-face cuboid-face-front" data-media={orientation === "standard"}>{orientation === "standard" ? visualSetMedia : null}</span><span className="cuboid-face cuboid-face-back" /><span className="cuboid-face cuboid-face-left" /><span className="cuboid-face cuboid-face-right" data-media={orientation === "rotated"}>{orientation === "rotated" ? visualSetMedia : null}</span><span className="cuboid-face cuboid-face-top" /><span className="cuboid-face cuboid-face-bottom" /></div>
+                </div>
               </div>
-            );
-          })}
-        </section>
-        <div className="fit-result" data-status={result.status} role="status" aria-live="polite"><div className="result-top"><span className="result-icon" aria-hidden="true">{result.icon}</span><div><h3>{result.title}</h3><p>{result.message}</p></div></div><div className="fit-deltas"><span>{result.orientation}</span><span>{t.strict}</span><span>{t.model}{dictionary.common.labelSeparator}{localeConfig.axes.height} {formatMeasurement(heightCm, unit, numberLocale)} · {localeConfig.axes.width} {formatMeasurement(widthCm, unit, numberLocale)} · {localeConfig.axes.depth} {formatMeasurement(depthCm, unit, numberLocale)} {unit}</span></div></div>
+              <div className="fit-visual-legend" aria-hidden="true"><span><i className="cabinet-swatch" />{t.cabinetLabel}</span><span><i className="set-swatch" />{t.setLabel}</span></div>
+            </section>
+          </details>
+        </div>
+        {isCustomActive ? <p className="custom-dimensions-hint" id={`custom-dimensions-hint-${safeInitialNumber}`}>{t.customDimensionsHint}</p> : null}
       </div>
     </div>
   );

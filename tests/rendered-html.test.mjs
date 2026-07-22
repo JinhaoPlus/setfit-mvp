@@ -35,13 +35,17 @@ test("publishes one canonical multilingual sitemap", async () => {
 test("keeps the interface compact while preserving horizontal furniture presets", async () => {
   const stylesheet = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(stylesheet, /\.furniture-preset-list \{[^}]*display: flex;[^}]*overflow-x: auto;/);
-  assert.match(stylesheet, /\.furniture-preset \{[^}]*width: 190px;[^}]*max-width: 74%;[^}]*flex: 0 0 190px;/);
+  assert.match(stylesheet, /\.furniture-preset \{[^}]*width: 150px;[^}]*max-width: 68%;[^}]*flex: 0 0 150px;/);
   assert.doesNotMatch(stylesheet, /grid-auto-columns/);
-  assert.match(stylesheet, /\.hero \{[^}]*grid-template-columns: minmax\(0, \.9fr\) minmax\(0, 1\.1fr\);[^}]*align-items: start;/);
-  assert.match(stylesheet, /\.hero-copy \{[^}]*position: sticky;[^}]*top: 96px;/);
-  assert.match(stylesheet, /\.hero-copy h1 \{[^}]*font-size: clamp\(3\.2rem, 5\.2vw, 5\.2rem\);/);
+  assert.match(stylesheet, /\.hero \{[^}]*min-height: calc\(100svh - 60px\);[^}]*grid-template-columns: minmax\(0, \.78fr\) minmax\(0, 1\.22fr\);[^}]*align-items: start;/);
+  assert.match(stylesheet, /\.hero-copy \{[^}]*position: sticky;[^}]*top: 82px;/);
+  assert.match(stylesheet, /\.hero-copy h1 \{[^}]*font-size: clamp\(2\.8rem, 4\.35vw, 4\.45rem\);/);
+  assert.match(stylesheet, /\.fit-core-grid \{[^}]*grid-template-columns: minmax\(190px,\.82fr\) minmax\(285px,1\.18fr\);/);
+  assert.match(stylesheet, /\.fit-secondary-tools \{[^}]*grid-template-columns: 1fr 1fr;/);
+  assert.match(stylesheet, /\.fit-secondary-panel > summary \{[^}]*min-height: 34px;/);
   assert.match(stylesheet, /\.set-grid \{[^}]*grid-template-columns: repeat\(4, 1fr\);/);
   assert.match(stylesheet, /@media \(max-width: 900px\) \{[\s\S]*?\.hero-copy \{[^}]*position: static;/);
+  assert.match(stylesheet, /@media \(max-width: 900px\) \{[\s\S]*?\.hero-tool \{[^}]*order: -1;/);
   assert.match(stylesheet, /\.nav-cta \{[^}]*white-space: nowrap;/);
   assert.match(stylesheet, /@media \(max-width: 680px\) \{[\s\S]*?\.nav-cta \{ display: none; \}/);
 });
@@ -64,6 +68,7 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /class="language-switcher-option"[^>]*role="option"/);
   assert.doesNotMatch(html, /<select[^>]*aria-label="Language"/);
   assert.match(html, /Will this set fit in your cabinet\?/);
+  assert.match(html, /"@type":"WebApplication"/);
   assert.match(html, /<link rel="icon" href="[^"]*\/favicon\.svg" type="image\/svg\+xml"/);
   assert.match(html, /clear internal dimensions of your cabinet or shelf/);
   assert.match(html, /Proportional cabinet preview/);
@@ -80,6 +85,9 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /aria-label="Set placement direction"/);
   assert.match(html, /aria-pressed="true">Standard orientation<\/button>/);
   assert.match(html, /Start with a cabinet preset/);
+  assert.equal((html.match(/<details class="fit-secondary-panel">/g) ?? []).length, 2);
+  assert.doesNotMatch(html, /<details class="fit-secondary-panel" open/);
+  assert.match(html, /class="fit-axis-summary" aria-label="Size comparison"/);
   assert.match(html, /Custom size/);
   assert.match(html, /Published outside size/);
   assert.match(html, /Estimated clear space/);
@@ -131,6 +139,8 @@ test("renders a product page with plain built dimensions", async () => {
   assert.match(html, /alt="Titanic LEGO Set 10294"/);
   assert.match(html, /Will this set fit in your cabinet\?/);
   assert.match(html, /Internal width/);
+  assert.ok(html.indexOf("detail-calculator detail-calculator-primary") < html.indexOf("detail-content shell"));
+  assert.match(html, /"@type":"BreadcrumbList"/);
   assert.doesNotMatch(html, /API field documentation/);
   assert.doesNotMatch(html, /Brickset owners/);
   assert.doesNotMatch(html, /2026-07-19/);

@@ -4,7 +4,7 @@ import { ShelfFitCalculator } from "@/components/ShelfFitCalculator";
 import { SetCard, type SetCardSet } from "@/components/SetCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { localePath, type Locale } from "@/config/site";
+import { localePath, siteOrigin, type Locale } from "@/config/site";
 import { getDictionary } from "@/data/i18n";
 import { getMeasurementGuide } from "@/data/measurement-guide";
 import { getLocalizedSetCatalog, libraryStats } from "@/data/sets";
@@ -13,7 +13,7 @@ export function HomePageContent({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
   const measurementGuide = getMeasurementGuide(locale);
   const localizedCatalog = getLocalizedSetCatalog(locale);
-  const featured: SetCardSet[] = localizedCatalog.displaySets.slice(0, 6).map((set) => ({
+  const featured: SetCardSet[] = localizedCatalog.displaySets.slice(0, 4).map((set) => ({
     set_id: set.set_id,
     set_number: set.set_number,
     name: set.name,
@@ -28,9 +28,36 @@ export function HomePageContent({ locale }: { locale: Locale }) {
     correction_method: set.correction_method,
     correction_confidence: set.correction_confidence,
   }));
+  const homeUrl = `${siteOrigin()}${localePath(locale)}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${homeUrl}#website`,
+        name: "bricksfit",
+        url: homeUrl,
+        description: t.home.metaDescription,
+        inLanguage: locale,
+      },
+      {
+        "@type": "WebApplication",
+        "@id": `${homeUrl}#fit-calculator`,
+        name: t.calculator.title,
+        url: `${homeUrl}#fit-checker`,
+        description: t.calculator.intro,
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Any",
+        browserRequirements: "Requires JavaScript",
+        isAccessibleForFree: true,
+        inLanguage: locale,
+      },
+    ],
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
       <SiteHeader locale={locale} />
       <main>
         <section className="hero shell">

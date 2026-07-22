@@ -283,7 +283,7 @@ test("publishes an accurate privacy and advertising status notice", async () => 
 test("publishes localized trust and legal pages", async () => {
   const expectations = [
     ["/en/about", /Display planning built around one practical question/, /The site does not currently load Google AdSense code/],
-    ["/de/contact", /Ein Maßfehler oder ein Rechteproblem gefunden/, /Korrekturanfrage auf GitHub öffnen/],
+    ["/de/contact", /Ein Maßfehler oder ein Rechteproblem gefunden/, /Korrektur per E-Mail melden/],
     ["/zh/sources", /数据和图片来自哪里/, /仅注明来源并不会自动取得许可/],
     ["/en/terms", /Use bricksfit as a planning reference/, /No fit or accuracy warranty/],
   ];
@@ -295,6 +295,23 @@ test("publishes localized trust and legal pages", async () => {
     assert.match(html, title);
     assert.match(html, detail);
     assert.match(html, /rel="canonical"/);
+  }
+});
+
+test("uses email instead of GitHub Issues for contact requests", async () => {
+  const expectations = [
+    ["/en/contact", /Email a correction/],
+    ["/de/contact", /Korrektur per E-Mail melden/],
+    ["/zh/contact", /发送纠错邮件/],
+  ];
+
+  for (const [path, label] of expectations) {
+    const response = await render(path);
+    assert.equal(response.status, 200);
+    const html = (await response.text()).replaceAll("<!-- -->", "");
+    assert.match(html, label);
+    assert.match(html, /href="mailto:rowin2013@gmail\.com\?subject=/);
+    assert.doesNotMatch(html, /github\.com\/JinhaoPlus\/setfit-mvp\/issues/i);
   }
 });
 

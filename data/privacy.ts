@@ -27,7 +27,7 @@ export const privacyContent = {
     metaDescription: "How bricksfit stores display-planning preferences and uses Vercel and consent-based PostHog analytics.",
     eyebrow: "Privacy and data use",
     title: "What stays in your browser—and what does not.",
-    copy: "bricksfit has no user accounts and does not accept private submissions. This notice describes the browser preferences and website measurement tools currently present on the site; Google AdSense is not currently installed.",
+    copy: "bricksfit has no user accounts or on-site submission form. This notice describes email contact, browser preferences and the website measurement tools currently present on the site; Google AdSense is not currently installed.",
     sections: [
       {
         title: "Cabinet measurements, unit and language",
@@ -67,8 +67,8 @@ export const privacyContent = {
       {
         title: "External links and contact",
         paragraphs: [
-          "Links to Brickset, LEGO, furniture manufacturers, GitHub and other sites take you to services with their own privacy practices. bricksfit does not control those external sites.",
-          "For a privacy question or correction, use the documented contact channel and do not include personal information in a public issue.",
+          "Links to Brickset, LEGO, furniture manufacturers and other sites take you to services with their own privacy practices. bricksfit does not control those external sites.",
+          "If you contact bricksfit by email, your email address and message contents are delivered to the operator's mailbox and used to review and respond to your request. Avoid sending sensitive personal information unless it is necessary.",
         ],
         links: [{ href: "/contact", label: "Contact bricksfit", external: false }],
       },
@@ -79,7 +79,7 @@ export const privacyContent = {
     metaDescription: "Wie bricksfit Einstellungen zur Stellflächenplanung speichert und Vercel- sowie einwilligungsbasierte PostHog-Analysen nutzt.",
     eyebrow: "Datenschutz und Datennutzung",
     title: "Was im Browser bleibt – und was nicht.",
-    copy: "bricksfit hat keine Benutzerkonten und nimmt keine privaten Einsendungen entgegen. Diese Hinweise beschreiben die Browser-Einstellungen und Messwerkzeuge, die derzeit auf der Website vorhanden sind; Google AdSense ist aktuell nicht installiert.",
+    copy: "bricksfit hat keine Benutzerkonten und kein Einsendeformular auf der Website. Diese Hinweise beschreiben den E-Mail-Kontakt, die Browser-Einstellungen und die derzeit vorhandenen Messwerkzeuge; Google AdSense ist aktuell nicht installiert.",
     sections: [
       {
         title: "Schrankmaße, Einheit und Sprache",
@@ -119,8 +119,8 @@ export const privacyContent = {
       {
         title: "Externe Links und Kontakt",
         paragraphs: [
-          "Links zu Brickset, LEGO, Möbelherstellern, GitHub und anderen Websites führen zu Diensten mit eigenen Datenschutzpraktiken. bricksfit kontrolliert diese externen Websites nicht.",
-          "Nutze für Datenschutzfragen oder Korrekturen den dokumentierten Kontaktweg und veröffentliche in einem öffentlichen Issue keine personenbezogenen Daten.",
+          "Links zu Brickset, LEGO, Möbelherstellern und anderen Websites führen zu Diensten mit eigenen Datenschutzpraktiken. bricksfit kontrolliert diese externen Websites nicht.",
+          "Wenn du bricksfit per E-Mail kontaktierst, werden deine E-Mail-Adresse und der Nachrichteninhalt an das Postfach des Betreibers übermittelt und zur Prüfung und Beantwortung deiner Anfrage verwendet. Sende sensible personenbezogene Angaben nur, wenn sie erforderlich sind.",
         ],
         links: [{ href: "/contact", label: "bricksfit kontaktieren", external: false }],
       },
@@ -131,7 +131,7 @@ export const privacyContent = {
     metaDescription: "说明 bricksfit 如何保存展示规划偏好，并使用 Vercel 与经用户同意后启用的 PostHog 网站分析。",
     eyebrow: "隐私与数据使用",
     title: "哪些数据留在浏览器里，哪些不会。",
-    copy: "bricksfit 没有用户账户，也不接收私人资料。本说明覆盖网站当前使用的浏览器偏好与网站测量工具；目前尚未安装 Google AdSense。",
+    copy: "bricksfit 没有用户账户，也没有站内提交表单。本说明覆盖电子邮件联系、网站当前使用的浏览器偏好与网站测量工具；目前尚未安装 Google AdSense。",
     sections: [
       {
         title: "柜架尺寸、单位与语言",
@@ -171,8 +171,8 @@ export const privacyContent = {
       {
         title: "外部链接与联系",
         paragraphs: [
-          "前往 Brickset、LEGO、家具品牌、GitHub 及其他网站的链接会进入各自拥有独立隐私规则的服务；bricksfit 无法控制这些外部网站。",
-          "如需咨询隐私或提出纠错，请使用已说明的联系渠道，并且不要在公开 Issue 中包含个人信息。",
+          "前往 Brickset、LEGO、家具品牌及其他网站的链接会进入各自拥有独立隐私规则的服务；bricksfit 无法控制这些外部网站。",
+          "如果你通过电子邮件联系 bricksfit，你的邮箱地址和邮件内容会发送到运营者邮箱，并用于审核及回复请求。除非确有必要，请勿发送敏感个人信息。",
         ],
         links: [{ href: "/contact", label: "联系 bricksfit", external: false }],
       },

@@ -28,7 +28,11 @@ type InformationPage = {
 
 type InformationPages = Record<InformationPageName, InformationPage>;
 
-const issueTracker = "https://github.com/JinhaoPlus/setfit-mvp/issues/new";
+const contactEmail = "rowin2013@gmail.com";
+
+function emailHref(subject: string) {
+  return `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}`;
+}
 
 export const informationPages = {
   en: {
@@ -72,31 +76,31 @@ export const informationPages = {
       metaDescription: "Report a dimension correction, broken source, technical issue or rights concern to bricksfit.",
       eyebrow: "Contact and corrections",
       title: "Found a size problem or a rights concern?",
-      intro: "bricksfit is maintained as a public reference project. The issue tracker is the documented contact channel for corrections, source updates, accessibility problems and removal requests.",
+      intro: "bricksfit is maintained as a public reference project. Email is the contact channel for corrections, source updates, accessibility problems and removal requests.",
       sections: [
         {
           title: "Dimension and source corrections",
           paragraphs: [
             "Include the set number, the page URL, the value that appears wrong and a public source supporting the correction. Please distinguish built-model dimensions from retail package dimensions.",
-            "Do not post personal information, order details or private documents in the public issue tracker.",
+            "Send only the information needed to review the correction. Do not include order details, private documents or other sensitive personal information unless they are necessary.",
           ],
-          links: [{ href: issueTracker, label: "Open a correction request on GitHub", external: true }],
+          links: [{ href: emailHref("bricksfit dimension or source correction"), label: "Email a correction", external: true }],
         },
         {
           title: "Image, trademark or copyright concerns",
           paragraphs: [
             "A rights holder or authorized representative can request review or removal of an image or reference. Identify the exact page and material, explain your relationship to the rights, and provide a safe way to verify the request without publishing sensitive details.",
           ],
-          links: [{ href: issueTracker, label: "Open a rights-review request", external: true }],
+          links: [{ href: emailHref("bricksfit rights-review request"), label: "Email a rights-review request", external: true }],
         },
         {
           title: "Privacy and technical issues",
           paragraphs: [
-            "The site has no user accounts or private submission form. For a bug, accessibility problem or privacy question about the documented analytics configuration, open an issue without including personal data.",
+            "The site has no user accounts or on-site submission form. For a bug, accessibility problem or privacy question about the documented analytics configuration, send an email with the relevant page URL and details.",
           ],
           links: [
             { href: "/privacy", label: "Read the privacy notice", external: false },
-            { href: issueTracker, label: "Open a technical issue", external: true },
+            { href: emailHref("bricksfit privacy or technical issue"), label: "Email a privacy or technical question", external: true },
           ],
         },
       ],
@@ -219,31 +223,31 @@ export const informationPages = {
       metaDescription: "Melde Maßkorrekturen, defekte Quellen, technische Probleme oder Rechtefragen an bricksfit.",
       eyebrow: "Kontakt und Korrekturen",
       title: "Ein Maßfehler oder ein Rechteproblem gefunden?",
-      intro: "bricksfit wird als öffentliches Informationsprojekt gepflegt. Der Issue-Tracker ist der dokumentierte Kontaktweg für Korrekturen, Quellenaktualisierungen, Barrierefreiheitsprobleme und Löschanfragen.",
+      intro: "bricksfit wird als öffentliches Informationsprojekt gepflegt. E-Mail ist der Kontaktweg für Korrekturen, Quellenaktualisierungen, Barrierefreiheitsprobleme und Löschanfragen.",
       sections: [
         {
           title: "Korrekturen an Maßen und Quellen",
           paragraphs: [
             "Nenne Set-Nummer, Seiten-URL, den vermutlich falschen Wert und eine öffentliche Quelle für die Korrektur. Unterscheide bitte zwischen Modell- und Verkaufsverpackungsmaßen.",
-            "Veröffentliche im öffentlichen Issue-Tracker keine personenbezogenen Angaben, Bestelldaten oder privaten Dokumente.",
+            "Sende nur die Angaben, die für die Prüfung nötig sind. Füge keine Bestelldaten, privaten Dokumente oder anderen sensiblen personenbezogenen Angaben bei, sofern sie nicht erforderlich sind.",
           ],
-          links: [{ href: issueTracker, label: "Korrekturanfrage auf GitHub öffnen", external: true }],
+          links: [{ href: emailHref("bricksfit: Korrektur von Maßen oder Quellen"), label: "Korrektur per E-Mail melden", external: true }],
         },
         {
           title: "Bild-, Marken- oder Urheberrechtsfragen",
           paragraphs: [
             "Rechteinhaber oder bevollmächtigte Vertretungen können die Prüfung oder Entfernung eines Bildes beziehungsweise Verweises verlangen. Nenne die genaue Seite und das Material, erläutere deine Beziehung zu den Rechten und ermögliche eine sichere Prüfung, ohne sensible Angaben öffentlich zu machen.",
           ],
-          links: [{ href: issueTracker, label: "Anfrage zur Rechteprüfung öffnen", external: true }],
+          links: [{ href: emailHref("bricksfit: Anfrage zur Rechteprüfung"), label: "Rechteprüfung per E-Mail anfragen", external: true }],
         },
         {
           title: "Datenschutz und technische Probleme",
           paragraphs: [
-            "Die Website hat keine Benutzerkonten und kein privates Einsendeformular. Erstelle bei Fehlern, Barrieren oder Datenschutzfragen zur dokumentierten Analysekonfiguration ein Issue, ohne personenbezogene Daten einzufügen.",
+            "Die Website hat keine Benutzerkonten und kein Einsendeformular. Sende bei Fehlern, Barrieren oder Datenschutzfragen zur dokumentierten Analysekonfiguration eine E-Mail mit der betroffenen Seiten-URL und den nötigen Angaben.",
           ],
           links: [
             { href: "/privacy", label: "Datenschutzhinweise lesen", external: false },
-            { href: issueTracker, label: "Technisches Issue öffnen", external: true },
+            { href: emailHref("bricksfit: Datenschutz- oder technische Frage"), label: "Datenschutz- oder technische Frage mailen", external: true },
           ],
         },
       ],
@@ -366,31 +370,31 @@ export const informationPages = {
       metaDescription: "向 bricksfit 反馈尺寸纠错、来源失效、技术问题或权利相关事项。",
       eyebrow: "联系与纠错",
       title: "发现尺寸问题或权利相关事项？",
-      intro: "bricksfit 以公开参考项目的方式维护。GitHub Issue 是已公开说明的联系渠道，用于数据纠错、来源更新、无障碍问题和移除请求。",
+      intro: "bricksfit 以公开参考项目的方式维护。数据纠错、来源更新、无障碍问题和移除请求均通过电子邮件联系。",
       sections: [
         {
           title: "尺寸与来源纠错",
           paragraphs: [
             "请提供套装编号、页面网址、疑似有误的数值，以及支持纠正的公开来源；请明确区分拼装成品尺寸与零售包装尺寸。",
-            "GitHub Issue 是公开页面，请勿发布个人信息、订单资料或私人文件。",
+            "请只发送审核纠错所需的信息；除非确有必要，请勿附带订单资料、私人文件或其他敏感个人信息。",
           ],
-          links: [{ href: issueTracker, label: "在 GitHub 提交纠错请求", external: true }],
+          links: [{ href: emailHref("bricksfit：尺寸或来源纠错"), label: "发送纠错邮件", external: true }],
         },
         {
           title: "图片、商标或版权事项",
           paragraphs: [
             "权利人或经授权的代表可以请求审核或移除图片及引用。请指出具体页面与材料，说明你与相关权利的关系，并提供不会公开敏感信息的安全核验方式。",
           ],
-          links: [{ href: issueTracker, label: "提交权利审核请求", external: true }],
+          links: [{ href: emailHref("bricksfit：权利审核请求"), label: "发送权利审核邮件", external: true }],
         },
         {
           title: "隐私与技术问题",
           paragraphs: [
-            "网站没有用户账户，也没有接收私人资料的表单。若要反馈故障、无障碍问题，或咨询已公开说明的网站分析配置，请在不包含个人数据的前提下提交 Issue。",
+            "网站没有用户账户，也没有站内提交表单。若要反馈故障、无障碍问题，或咨询已公开说明的网站分析配置，请通过邮件提供相关页面网址和必要说明。",
           ],
           links: [
             { href: "/privacy", label: "阅读隐私说明", external: false },
-            { href: issueTracker, label: "提交技术问题", external: true },
+            { href: emailHref("bricksfit：隐私或技术问题"), label: "发送隐私或技术问题邮件", external: true },
           ],
         },
       ],

@@ -32,7 +32,9 @@ export function InformationPageContent({ locale, page }: { locale: Locale; page:
                 <ul className="information-links">
                   {section.links.map((link) => (
                     <li key={link.href}>
-                      {link.external
+                      {link.href.startsWith("mailto:")
+                        ? <a href={link.href}>{link.label} →</a>
+                        : link.external
                         ? <a href={link.href} target="_blank" rel="noreferrer">{link.label} ↗</a>
                         : <Link href={localePath(locale, link.href)}>{link.label} →</Link>}
                     </li>

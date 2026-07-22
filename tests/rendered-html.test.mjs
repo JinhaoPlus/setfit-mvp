@@ -40,7 +40,7 @@ test("keeps the interface compact while preserving horizontal furniture presets"
   assert.match(stylesheet, /\.hero \{[^}]*min-height: calc\(100svh - 60px\);[^}]*grid-template-columns: minmax\(0, \.78fr\) minmax\(0, 1\.22fr\);[^}]*align-items: start;/);
   assert.match(stylesheet, /\.hero-copy \{[^}]*position: sticky;[^}]*top: 82px;/);
   assert.match(stylesheet, /\.hero-copy h1 \{[^}]*font-size: clamp\(2\.8rem, 4\.35vw, 4\.45rem\);/);
-  assert.match(stylesheet, /\.fit-core-grid \{[^}]*grid-template-columns: minmax\(190px,\.82fr\) minmax\(285px,1\.18fr\);/);
+  assert.match(stylesheet, /\.fit-core-flow \{[^}]*display: grid;[^}]*gap: 9px;/);
   assert.match(stylesheet, /\.fit-secondary-tools \{[^}]*grid-template-columns: 1fr;/);
   assert.match(stylesheet, /\.fit-secondary-panel > summary \{[^}]*min-height: 34px;/);
   assert.match(stylesheet, /\.set-grid \{[^}]*grid-template-columns: repeat\(4, 1fr\);/);
@@ -87,7 +87,8 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /Start with a cabinet preset/);
   assert.equal((html.match(/<details class="fit-secondary-panel(?: [^"]*)?">/g) ?? []).length, 2);
   assert.doesNotMatch(html, /<details class="fit-secondary-panel(?: [^"]*)?" open/);
-  assert.ok(html.indexOf("fit-preset-panel") < html.indexOf("fit-core-grid"));
+  assert.ok(html.indexOf("set-combobox") < html.indexOf("fit-preset-panel"));
+  assert.ok(html.indexOf("fit-preset-panel") < html.indexOf("dimension-inputs"));
   assert.ok(html.indexOf("fit-axis-summary") < html.indexOf("fit-secondary-tools"));
   assert.match(html, /class="fit-axis-summary" aria-label="Size comparison"/);
   assert.match(html, /Custom size/);

@@ -137,6 +137,40 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
     <div className="fit-card">
       <div className="fit-card-header"><div><h2>{t.title}</h2><p>{t.intro}</p></div></div>
       <div className="fit-form">
+        <details className="fit-secondary-panel fit-preset-panel">
+          <summary><span>{t.presetTitle}</span><small>{furniturePresets.length + 1} {t.presetCount}</small></summary>
+          <section className="furniture-presets" aria-labelledby={`furniture-presets-title-${safeInitialNumber}`}>
+            <div className="furniture-presets-heading">
+              <div>
+                <span className="fit-visual-kicker">{t.presetKicker}</span>
+                <h3 id={`furniture-presets-title-${safeInitialNumber}`}>{t.presetTitle}</h3>
+              </div>
+            </div>
+            <p className="furniture-presets-intro">{t.presetIntro}</p>
+            <div className="furniture-preset-list">
+              <article className="furniture-preset furniture-preset-custom" data-active={isCustomActive}>
+                <button type="button" className="furniture-preset-button" aria-label={t.customPresetName} aria-pressed={isCustomActive} onClick={selectCustomDimensions}>
+                  <span className="furniture-preset-image furniture-preset-custom-visual" aria-hidden="true"><span>{localeConfig.axes.width} × {localeConfig.axes.depth} × {localeConfig.axes.height}</span></span>
+                  <span className="furniture-preset-copy"><span className="furniture-preset-brand">{t.customPresetBrand}</span><strong>{t.customPresetName}</strong><span className="furniture-preset-clear-label">{t.customPresetCopy}</span><span className="furniture-preset-action">{isCustomActive ? t.customPresetActive : t.customPresetApply}</span></span>
+                </button>
+              </article>
+              {furniturePresets.map((preset) => {
+                const isActive = !customSelected && activeFurniturePreset?.id === preset.id;
+                return (
+                  <article className="furniture-preset" data-active={isActive} key={preset.id}>
+                    <button type="button" className="furniture-preset-button" aria-label={`${t.presetApply}${dictionary.common.labelSeparator}${preset.brand} ${preset.name}`} aria-pressed={isActive} onClick={() => applyFurniturePreset(preset)}>
+                      <span className="furniture-preset-image"><Image src={preset.imagePath} alt={`${preset.brand} ${preset.name} ${t.presetImage}`} fill unoptimized sizes="150px" /></span>
+                      <span className="furniture-preset-copy"><span className="furniture-preset-brand">{preset.brand} · {preset.kind === "largeDisplayCase" ? t.presetLargeDisplayCase : preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span><strong>{preset.name}</strong><span className="furniture-preset-clear-label">{preset.publishedClearSpace ? t.presetClearPublished : t.presetClear}</span><span className="furniture-preset-dimensions">{furnitureDimensions(preset.planningClearCm)}</span><span className="furniture-preset-action">{isActive ? t.presetApplied : t.presetApply}</span></span>
+                    </button>
+                    <div className="furniture-preset-source"><span>{t.presetOuter}{dictionary.common.labelSeparator}{furnitureDimensions(preset.publishedOuterCm)}</span></div>
+                  </article>
+                );
+              })}
+            </div>
+            <p className="furniture-presets-note">{t.presetNote}</p>
+          </section>
+        </details>
+        {isCustomActive ? <p className="custom-dimensions-hint" id={`custom-dimensions-hint-${safeInitialNumber}`}>{t.customDimensionsHint}</p> : null}
         <div className="fit-core-grid">
           <SearchableSetSelect
             id={`set-${safeInitialNumber}`}
@@ -184,40 +218,6 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
 
         <div className="fit-secondary-tools">
           <details className="fit-secondary-panel">
-            <summary><span>{t.presetTitle}</span><small>{furniturePresets.length + 1} {t.presetCount}</small></summary>
-            <section className="furniture-presets" aria-labelledby={`furniture-presets-title-${safeInitialNumber}`}>
-              <div className="furniture-presets-heading">
-                <div>
-                  <span className="fit-visual-kicker">{t.presetKicker}</span>
-                  <h3 id={`furniture-presets-title-${safeInitialNumber}`}>{t.presetTitle}</h3>
-                </div>
-              </div>
-              <p className="furniture-presets-intro">{t.presetIntro}</p>
-              <div className="furniture-preset-list">
-                <article className="furniture-preset furniture-preset-custom" data-active={isCustomActive}>
-                  <button type="button" className="furniture-preset-button" aria-label={t.customPresetName} aria-pressed={isCustomActive} onClick={selectCustomDimensions}>
-                    <span className="furniture-preset-image furniture-preset-custom-visual" aria-hidden="true"><span>{localeConfig.axes.width} × {localeConfig.axes.depth} × {localeConfig.axes.height}</span></span>
-                    <span className="furniture-preset-copy"><span className="furniture-preset-brand">{t.customPresetBrand}</span><strong>{t.customPresetName}</strong><span className="furniture-preset-clear-label">{t.customPresetCopy}</span><span className="furniture-preset-action">{isCustomActive ? t.customPresetActive : t.customPresetApply}</span></span>
-                  </button>
-                </article>
-                {furniturePresets.map((preset) => {
-                  const isActive = !customSelected && activeFurniturePreset?.id === preset.id;
-                  return (
-                    <article className="furniture-preset" data-active={isActive} key={preset.id}>
-                      <button type="button" className="furniture-preset-button" aria-label={`${t.presetApply}${dictionary.common.labelSeparator}${preset.brand} ${preset.name}`} aria-pressed={isActive} onClick={() => applyFurniturePreset(preset)}>
-                        <span className="furniture-preset-image"><Image src={preset.imagePath} alt={`${preset.brand} ${preset.name} ${t.presetImage}`} fill unoptimized sizes="150px" /></span>
-                        <span className="furniture-preset-copy"><span className="furniture-preset-brand">{preset.brand} · {preset.kind === "largeDisplayCase" ? t.presetLargeDisplayCase : preset.kind === "singleCube" ? t.presetSingleCube : t.presetSingleShelf}</span><strong>{preset.name}</strong><span className="furniture-preset-clear-label">{preset.publishedClearSpace ? t.presetClearPublished : t.presetClear}</span><span className="furniture-preset-dimensions">{furnitureDimensions(preset.planningClearCm)}</span><span className="furniture-preset-action">{isActive ? t.presetApplied : t.presetApply}</span></span>
-                      </button>
-                      <div className="furniture-preset-source"><span>{t.presetOuter}{dictionary.common.labelSeparator}{furnitureDimensions(preset.publishedOuterCm)}</span></div>
-                    </article>
-                  );
-                })}
-              </div>
-              <p className="furniture-presets-note">{t.presetNote}</p>
-            </section>
-          </details>
-
-          <details className="fit-secondary-panel">
             <summary><span>{t.previewTitle}</span><small>{selected.name}</small></summary>
             <section className="fit-visual" aria-labelledby={`fit-visual-title-${safeInitialNumber}`}>
               <div className="fit-visual-heading"><div><span className="fit-visual-kicker">{t.previewTitle}</span><h3 id={`fit-visual-title-${safeInitialNumber}`}>{selected.name}</h3></div><InfoTip id={`calculator-size-${selected.set_id}`} text={dimensionInfoText(selected, locale)} label={`${t.info} ${selected.name}`} /></div>
@@ -237,7 +237,6 @@ export function ShelfFitCalculator({ sets, locale, initialSetNumber = "10294" }:
             </section>
           </details>
         </div>
-        {isCustomActive ? <p className="custom-dimensions-hint" id={`custom-dimensions-hint-${safeInitialNumber}`}>{t.customDimensionsHint}</p> : null}
       </div>
     </div>
   );

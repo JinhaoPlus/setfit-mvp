@@ -32,6 +32,13 @@ test("publishes one canonical multilingual sitemap", async () => {
   assert.match(await robotsResponse.text(), /Sitemap: http:\/\/localhost:3000\/sitemap\.xml/);
 });
 
+test("publishes the AdSense seller authorization at the site root", async () => {
+  const response = await render("/ads.txt");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /^text\/plain/);
+  assert.equal(await response.text(), "google.com, pub-7811998365638543, DIRECT, f08c47fec0942fa0\n");
+});
+
 test("keeps the interface compact while preserving horizontal furniture presets", async () => {
   const stylesheet = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(stylesheet, /\.furniture-preset-list \{[^}]*display: flex;[^}]*overflow-x: auto;/);

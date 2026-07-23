@@ -22,12 +22,18 @@ function dimensionDescription(set: DisplaySet, locale: Locale) {
   return `${t.common.height}${t.common.labelSeparator}${formatMeasurement(set.corrected_height_cm, unit, localeConfig.numberLocale)} ${unit}${t.common.listSeparator}${t.common.width}${t.common.labelSeparator}${formatMeasurement(set.corrected_width_cm, unit, localeConfig.numberLocale)} ${unit}${t.common.listSeparator}${t.common.depth}${t.common.labelSeparator}${formatMeasurement(set.corrected_depth_cm, unit, localeConfig.numberLocale)} ${unit}`;
 }
 
+function setMetaDescription(set: DisplaySet, locale: Locale) {
+  const t = getDictionary(locale);
+  const actionCopy = hasPlanningDimensions(set) ? t.detail.metaFitCopy : t.detail.metaCopy;
+  return `${set.name} ${set.set_number}${t.common.labelSeparator}${dimensionDescription(set, locale)}${t.common.sentenceSeparator}${actionCopy}`;
+}
+
 export function buildSetMetadata(slug: string, locale: Locale): Metadata {
   const t = getDictionary(locale);
   const localeConfig = localeSettings[locale];
   const set = getLocalizedSetBySlug(slug, locale);
   if (!set) return {};
-  const description = `${set.name} ${set.set_number}${t.common.labelSeparator}${dimensionDescription(set, locale)}${t.common.sentenceSeparator}${t.detail.metaCopy}`;
+  const description = setMetaDescription(set, locale);
   const image = setImagePath(set);
   const title = `${set.name} ${set.set_number}`;
   const path = `/sets/${set.slug}`;
@@ -85,7 +91,7 @@ export function SetDetailPageContent({ slug, locale }: { slug: string; locale: L
         "@id": `${pageUrl}#webpage`,
         url: pageUrl,
         name: `${set.name} ${set.set_number}`,
-        description: `${dimensionDescription(set, locale)}${t.common.sentenceSeparator}${t.detail.metaCopy}`,
+        description: setMetaDescription(set, locale),
         inLanguage: locale,
         breadcrumb: { "@id": breadcrumbId },
         ...(image ? { primaryImageOfPage: new URL(image, siteOrigin()).href } : {}),

@@ -79,7 +79,7 @@ export const dictionaries = {
       currentLibrary: "Current ranked library", built: "built H/W/D", packages: "package sizes", weights: "package weights",
     },
     detail: {
-      metaNoFixed: "no single fixed built size", metaCopy: "See built size, package size and display-space guidance.",
+      metaNoFixed: "no single fixed built size", metaCopy: "See built size, package size and display-space guidance.", metaFitCopy: "Open the 3D view with your cabinet’s inside dimensions and see if it fits.",
       builtLabel: "Built H × W × D", builtDimensions: "Built model dimensions", noFixed: "No single fixed size", noFixedDescription: "This product contains separate models, modules or parts that should be planned individually.",
       imageUnavailable: "Set image unavailable", imageCourtesy: "Set image source: ", noImage: "No catalog image was available in the Brickset image library.", info: "About the dimensions for",
       planningTitle: "Size and display planning", modelListed: "The built model is listed as", startingSpace: "Starting display space", volume: "Rectangular envelope volume", movable: "Movable parts, doors, sails and antennas may need more space.", noFixedBody: "This product does not have one practical fixed H/W/D record. Plan its individual models, bags or modules separately.", sizeSource: "View size source",
@@ -176,7 +176,7 @@ export const dictionaries = {
       currentLibrary: "Aktuelle Set-Bibliothek", built: "vollständige Modellmaße H/B/T", packages: "Datensätze mit Verpackungsmaßen", weights: "Datensätze mit Verpackungsgewicht",
     },
     detail: {
-      metaNoFixed: "keine einheitliche feste Modellgröße", metaCopy: "Sieh dir Modellmaße, Verpackungsmaße und Hinweise zur Stellflächenplanung an.",
+      metaNoFixed: "keine einheitliche feste Modellgröße", metaCopy: "Sieh dir Modellmaße, Verpackungsmaße und Hinweise zur Stellflächenplanung an.", metaFitCopy: "Öffne die 3D-Ansicht mit deinen Schrankinnenmaßen und sieh, ob es passt.",
       builtLabel: "Gebautes Modell H × B × T", builtDimensions: "Maße des gebauten Modells", noFixed: "Keine einheitliche feste Größe", noFixedDescription: "Dieses Produkt enthält getrennte Modelle, Module oder Teile, deren Platzbedarf einzeln geplant werden sollte.",
       imageUnavailable: "Keine Set-Abbildung verfügbar", imageCourtesy: "Quelle der Set-Abbildung: ", noImage: "In der Brickset-Bildbibliothek war keine Katalogabbildung verfügbar.", info: "Erläuterungen zu den Maßen von",
       planningTitle: "Maße und Stellflächenplanung", modelListed: "Für das gebaute Modell sind folgende Maße erfasst:", startingSpace: "Empfohlener Ausgangswert für die Stellfläche", volume: "Volumen des umschließenden Quaders", movable: "Bewegliche Teile, Türen, Segel und Antennen können zusätzlichen Platz benötigen.", noFixedBody: "Für dieses Produkt gibt es keinen sinnvollen einheitlichen H/B/T-Datensatz. Plane die einzelnen Modelle, Beutel oder Module getrennt.", sizeSource: "Quelle der Modellmaße ansehen",
@@ -273,7 +273,7 @@ export const dictionaries = {
       currentLibrary: "当前套装资料库", built: "条完整成品高/宽/深记录", packages: "条包装尺寸记录", weights: "条包装重量记录",
     },
     detail: {
-      metaNoFixed: "没有单一固定的拼装成品尺寸", metaCopy: "查看拼装成品尺寸、包装尺寸和展示空间建议。",
+      metaNoFixed: "没有单一固定的拼装成品尺寸", metaCopy: "查看拼装成品尺寸、包装尺寸和展示空间建议。", metaFitCopy: "打开 3D 视图，输入你的柜子内部净尺寸，直观判断套装能否放入。",
       builtLabel: "拼装成品高 × 宽 × 深", builtDimensions: "拼装成品尺寸", noFixed: "没有单一固定尺寸", noFixedDescription: "这个产品包含多个独立模型、模块或部件，需要分别规划展示空间。",
       imageUnavailable: "暂无套装图片", imageCourtesy: "套装图片来源：", noImage: "Brickset 图片库中没有可用的产品目录图片。", info: "关于以下套装的尺寸说明：",
       planningTitle: "尺寸与展示空间规划", modelListed: "该拼装模型记录的尺寸为", startingSpace: "建议起始展示空间", volume: "矩形外包络体积", movable: "活动部件、门、帆和天线可能需要更多空间。", noFixedBody: "这个产品没有一个适合规划的固定高/宽/深记录，请分别规划其中各个模型、袋装部件或模块的空间。", sizeSource: "查看模型尺寸来源",

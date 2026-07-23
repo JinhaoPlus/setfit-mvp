@@ -144,6 +144,7 @@ test("renders a product page with plain built dimensions", async () => {
   const html = (await response.text()).replaceAll("<!-- -->", "");
   assert.match(html, /<h1 class="detail-title">Titanic<\/h1>/);
   assert.match(html, /<title>Titanic 10294 \| bricksfit<\/title>/);
+  assert.match(html, /<meta name="description" content="Titanic 10294: Height: 17\.3 in, Width: 6\.3 in, Depth: 53\.1 in\. Open the 3D view with your cabinet’s inside dimensions and see if it fits\."/);
   assert.match(html, /Built H × W × D/);
   assert.match(html, /17\.3(?:<!-- -->)? H × (?:<!-- -->)?6\.3(?:<!-- -->)? W × (?:<!-- -->)?53\.1(?:<!-- -->)? D in/);
   assert.match(html, /alt="Titanic LEGO Set 10294"/);
@@ -202,6 +203,7 @@ test("renders a separately indexable German version", async () => {
   assert.match(html, /aria-label="Maßeinheit"/);
   assert.match(html, /aria-pressed="true">CM<\/button>/);
   assert.match(html, /44(?:<!-- -->)? H × (?:<!-- -->)?16(?:<!-- -->)? B × (?:<!-- -->)?135(?:<!-- -->)? T cm/);
+  assert.match(html, /<meta name="description" content="Titanic 10294: Höhe: 44 cm, Breite: 16 cm, Tiefe: 135 cm\. Öffne die 3D-Ansicht mit deinen Schrankinnenmaßen und sieh, ob es passt\."/);
   assert.match(html, /hrefLang="en"/);
   assert.match(html, /hrefLang="de"/);
   assert.match(html, /rel="canonical" href="http:\/\/localhost(?::3000)?\/de\/sets\/10294-titanic-dimensions"/);
@@ -215,6 +217,7 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /<html lang="zh"/);
   assert.match(html, /<h1 class="detail-title">泰坦尼克号<\/h1>/);
   assert.match(html, /<title>泰坦尼克号 10294 \| bricksfit<\/title>/);
+  assert.match(html, /<meta name="description" content="泰坦尼克号 10294：高度：44 cm，宽度：16 cm，深度：135 cm。打开 3D 视图，输入你的柜子内部净尺寸，直观判断套装能否放入。"/);
   assert.match(html, /alt="泰坦尼克号 LEGO 套装 10294"/);
   assert.doesNotMatch(html, /位 Brickset 拥有者/);
   assert.match(html, /柜子是否能装得下/);

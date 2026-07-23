@@ -26,7 +26,7 @@ export const dictionaries = {
       privacyLink: "Privacy details",
       label: "Analytics preference",
     },
-    common: { home: "Home", guides: "Guides", set: "Set", height: "Height", width: "Width", depth: "Depth", yes: "Yes", no: "No", pieces: "pieces", breadcrumb: "Breadcrumb", labelSeparator: ": ", listSeparator: ", ", recordSeparator: "; ", sentenceEnd: ".", sentenceSeparator: ". " },
+    common: { home: "Home", guides: "Guides", set: "Set", height: "Height", width: "Width", depth: "Depth", yes: "Yes", no: "No", pieces: "pieces", breadcrumb: "Breadcrumb", units: { cm: { full: "Centimeters", compact: "cm" }, in: { full: "Inches", compact: "inch" } }, labelSeparator: ": ", listSeparator: ", ", recordSeparator: "; ", sentenceEnd: ".", sentenceSeparator: ". " },
     card: { rank: "Piece rank", noFixed: "No single fixed size", imageUnavailable: "Set image unavailable", builtAria: "Built dimensions", info: "About the dimensions for" },
     library: {
       searchLabel: "Search set name or number", searchPlaceholder: "e.g. Titanic or 10294", theme: "Theme", allThemes: "All themes",
@@ -123,7 +123,7 @@ export const dictionaries = {
       privacyLink: "Datenschutzhinweise",
       label: "Analyse-Einstellung",
     },
-    common: { home: "Startseite", guides: "Ratgeber", set: "Set", height: "Höhe", width: "Breite", depth: "Tiefe", yes: "Ja", no: "Nein", pieces: "Teile", breadcrumb: "Breadcrumb-Navigation", labelSeparator: ": ", listSeparator: ", ", recordSeparator: "; ", sentenceEnd: ".", sentenceSeparator: ". " },
+    common: { home: "Startseite", guides: "Ratgeber", set: "Set", height: "Höhe", width: "Breite", depth: "Tiefe", yes: "Ja", no: "Nein", pieces: "Teile", breadcrumb: "Breadcrumb-Navigation", units: { cm: { full: "Zentimeter", compact: "cm" }, in: { full: "Zoll", compact: "Zoll" } }, labelSeparator: ": ", listSeparator: ", ", recordSeparator: "; ", sentenceEnd: ".", sentenceSeparator: ". " },
     card: { rank: "Rang nach Teilezahl", noFixed: "Keine einheitliche feste Größe", imageUnavailable: "Keine Set-Abbildung verfügbar", builtAria: "Maße des gebauten Modells", info: "Erläuterungen zu den Maßen von" },
     library: {
       searchLabel: "Nach Set-Name oder Set-Nummer suchen", searchPlaceholder: "z. B. Titanic oder 10294", theme: "Thema", allThemes: "Alle Themen",
@@ -220,7 +220,7 @@ export const dictionaries = {
       privacyLink: "查看隐私说明",
       label: "网站分析偏好",
     },
-    common: { home: "首页", guides: "指南", set: "套装", height: "高度", width: "宽度", depth: "深度", yes: "是", no: "否", pieces: "个零件", breadcrumb: "面包屑导航", labelSeparator: "：", listSeparator: "，", recordSeparator: "；", sentenceEnd: "。", sentenceSeparator: "。" },
+    common: { home: "首页", guides: "指南", set: "套装", height: "高度", width: "宽度", depth: "深度", yes: "是", no: "否", pieces: "个零件", breadcrumb: "面包屑导航", units: { cm: { full: "厘米", compact: "厘米" }, in: { full: "英寸", compact: "英寸" } }, labelSeparator: "：", listSeparator: "，", recordSeparator: "；", sentenceEnd: "。", sentenceSeparator: "。" },
     card: { rank: "零件数排名", noFixed: "没有单一固定尺寸", imageUnavailable: "暂无套装图片", builtAria: "拼装成品尺寸", info: "关于以下套装的尺寸说明：" },
     library: {
       searchLabel: "按套装名称或编号搜索", searchPlaceholder: "例如 Titanic 或 10294", theme: "主题", allThemes: "全部主题",

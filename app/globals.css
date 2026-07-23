@@ -49,8 +49,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .main-nav a { color: var(--ink-soft); text-decoration: none; font-size: .91rem; font-weight: 700; }
 .main-nav a:hover { color: var(--ink); }
 .nav-cta { flex: 0 0 auto; padding: 8px 13px; border: 1px solid var(--ink) !important; border-radius: 999px; color: var(--ink) !important; white-space: nowrap; }
-.header-unit-toggle { display: flex; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); }
-.header-unit-toggle button { min-width: 32px; min-height: 28px; padding: 0 8px; border: 0; border-radius: 999px; color: var(--ink-soft); background: transparent; font-size: .69rem; font-weight: 900; cursor: pointer; }
+.header-unit-toggle { flex: 0 0 auto; display: flex; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); }
+.header-unit-toggle button { min-width: 42px; min-height: 28px; padding: 0 9px; border: 0; border-radius: 999px; color: var(--ink-soft); background: transparent; font-size: .66rem; font-weight: 850; white-space: nowrap; cursor: pointer; }
+.header-unit-toggle button::after { content: attr(data-compact-label); display: none; }
 .header-unit-toggle button[aria-pressed="true"] { color: white; background: var(--ink); }
 .header-unit-toggle button:focus-visible { outline: 3px solid rgba(239,99,53,.3); outline-offset: 2px; }
 
@@ -493,6 +494,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 780px) {
   .main-nav { gap: 8px; }
   .main-nav > a:not(.nav-cta) { display: none; }
+  .header-unit-toggle button { padding-inline: 8px; }
+  .header-unit-toggle button span { display: none; }
+  .header-unit-toggle button::after { display: inline; }
 }
 
 @media (max-width: 680px) {

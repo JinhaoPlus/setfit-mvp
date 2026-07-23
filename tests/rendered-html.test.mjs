@@ -121,7 +121,8 @@ test("server-renders the English large-set homepage", async () => {
   assert.match(html, /<span aria-hidden="true">🇨🇳<\/span><span lang="zh">中文/);
   assert.equal((html.match(/class="header-unit-toggle"/g) ?? []).length, 1);
   assert.match(html, /aria-label="Measurement unit"/);
-  assert.match(html, /aria-pressed="true">IN<\/button>/);
+  assert.match(html, /aria-label="Centimeters" aria-pressed="false" data-compact-label="cm"><span>Centimeters<\/span><\/button>/);
+  assert.match(html, /aria-label="Inches" aria-pressed="true" data-compact-label="inch"><span>Inches<\/span><\/button>/);
   assert.doesNotMatch(html, /class="unit-toggle"/);
   assert.doesNotMatch(html, /2026-07-19/);
   assert.doesNotMatch(html.replaceAll("中文", ""), /[\u4e00-\u9fff]/);
@@ -201,7 +202,8 @@ test("renders a separately indexable German version", async () => {
   assert.match(html, /bricksfit/);
   assert.doesNotMatch(html, /Set(?:Fit)/);
   assert.match(html, /aria-label="Maßeinheit"/);
-  assert.match(html, /aria-pressed="true">CM<\/button>/);
+  assert.match(html, /aria-label="Zentimeter" aria-pressed="true" data-compact-label="cm"><span>Zentimeter<\/span><\/button>/);
+  assert.match(html, /aria-label="Zoll" aria-pressed="false" data-compact-label="Zoll"><span>Zoll<\/span><\/button>/);
   assert.match(html, /44(?:<!-- -->)? H × (?:<!-- -->)?16(?:<!-- -->)? B × (?:<!-- -->)?135(?:<!-- -->)? T cm/);
   assert.match(html, /<meta name="description" content="Titanic 10294: Höhe: 44 cm, Breite: 16 cm, Tiefe: 135 cm\. Öffne die 3D-Ansicht mit deinen Schrankinnenmaßen und sieh, ob es passt\."/);
   assert.match(html, /hrefLang="en"/);
@@ -224,7 +226,8 @@ test("renders a separately indexable Simplified Chinese version", async () => {
   assert.match(html, /bricksfit/);
   assert.doesNotMatch(html, /Set(?:Fit)/);
   assert.match(html, /aria-label="测量单位"/);
-  assert.match(html, /aria-pressed="true">CM<\/button>/);
+  assert.match(html, /aria-label="厘米" aria-pressed="true" data-compact-label="厘米"><span>厘米<\/span><\/button>/);
+  assert.match(html, /aria-label="英寸" aria-pressed="false" data-compact-label="英寸"><span>英寸<\/span><\/button>/);
   assert.match(html, /44(?:<!-- -->)? 高 × (?:<!-- -->)?16(?:<!-- -->)? 宽 × (?:<!-- -->)?135(?:<!-- -->)? 深 cm/);
   assert.match(html, /请输入柜子或书架可用的内部净尺寸/);
   assert.match(html, /内部净宽/);
